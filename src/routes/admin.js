@@ -126,6 +126,7 @@ router.get("/financial-reports", (req, res) => {
   const data = db.getFinancialSummary({});
   const transactions = db.getTransactions();
   const expenses = db.getExpenses();
+  const orders = db.getOrders();
   
   // Calculate total revenue
   const totalRevenue = data.income || 0;
@@ -133,11 +134,21 @@ router.get("/financial-reports", (req, res) => {
   const netProfit = totalRevenue - totalExpenses;
   const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(2) : 0;
   
+  // Individual income components
+  const rentalIncome = data.rentalIncome || 0;
+  const tourIncome = data.tourIncome || 0;
+  const airportIncome = data.airportIncome || 0;
+  
+  // Individual expense components
+  const operationalExpenses = data.operationalExpenses || 0;
+  const salaryExpenses = data.salaryExpenses || 0;
+  const driverCommission = data.driverCommission || 0;
+  
   // Income items breakdown
   const incomeItems = [
-    { label: 'Pendapatan Rental', amount: data.rentalIncome || 0 },
-    { label: 'Pendapatan Tour', amount: data.tourIncome || 0 },
-    { label: 'Pendapatan Airport', amount: data.airportIncome || 0 },
+    { label: 'Pendapatan Rental', amount: rentalIncome },
+    { label: 'Pendapatan Tour', amount: tourIncome },
+    { label: 'Pendapatan Airport', amount: airportIncome },
   ].map(item => ({
     ...item,
     percentage: totalRevenue > 0 ? ((item.amount / totalRevenue) * 100).toFixed(2) : 0
@@ -145,9 +156,9 @@ router.get("/financial-reports", (req, res) => {
   
   // Expense items breakdown
   const expenseItems = [
-    { label: 'Pengeluaran Operasional', amount: data.operationalExpenses || 0 },
-    { label: 'Gaji Karyawan', amount: data.salaryExpenses || 0 },
-    { label: 'Komisi Driver', amount: data.driverCommission || 0 },
+    { label: 'Pengeluaran Operasional', amount: operationalExpenses },
+    { label: 'Gaji Karyawan', amount: salaryExpenses },
+    { label: 'Komisi Driver', amount: driverCommission },
   ].map(item => ({
     ...item,
     percentage: totalExpenses > 0 ? ((item.amount / totalExpenses) * 100).toFixed(2) : 0
@@ -169,8 +180,8 @@ router.get("/financial-reports", (req, res) => {
   // Cash flow calculations
   const operatingCashFlow = [
     { label: 'Penerimaan dari pelanggan', in: totalRevenue, out: 0, net: totalRevenue },
-    { label: 'Pembayaran operasional', in: 0, out: data.operationalExpenses || 0, net: -(data.operationalExpenses || 0) },
-    { label: 'Pembayaran gaji', in: 0, out: data.salaryExpenses || 0, net: -(data.salaryExpenses || 0) },
+    { label: 'Pembayaran operasional', in: 0, out: operationalExpenses, net: -operationalExpenses },
+    { label: 'Pembayaran gaji', in: 0, out: salaryExpenses, net: -salaryExpenses },
   ];
   
   const investingCashFlow = [
@@ -199,6 +210,12 @@ router.get("/financial-reports", (req, res) => {
     profitMargin,
     incomeItems,
     expenseItems,
+    rentalIncome,
+    tourIncome,
+    airportIncome,
+    operationalExpenses,
+    salaryExpenses,
+    driverCommission,
     cashAndEquivalents,
     accountsReceivable,
     inventory,

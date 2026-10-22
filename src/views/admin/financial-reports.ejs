@@ -339,7 +339,7 @@ new Chart(expenseDistributionCtx, {
   data: {
     labels: ['Operasional', 'Gaji', 'Komisi'],
     datasets: [{
-      data: [<%= (data.operationalExpenses || 0) / 1000000 %>, <%= (data.salaryExpenses || 0) / 1000000 %>, <%= (data.driverCommission || 0) / 1000000 %>],
+      data: [<%= (operationalExpenses || 0) / 1000000 %>, <%= (salaryExpenses || 0) / 1000000 %>, <%= (driverCommission || 0) / 1000000 %>],
       backgroundColor: [
         'rgba(16, 185, 129, 0.8)',
         'rgba(59, 130, 246, 0.8)',
@@ -387,14 +387,14 @@ function exportToExcel() {
   const data = [
     ['Kategori', 'Jumlah', 'Persentase'],
     ['PENDAPATAN', '', ''],
-    ['Pendapatan Rental', '<%= (data.rentalIncome || 0) %>', '<%= ((data.rentalIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
-    ['Pendapatan Tour', '<%= (data.tourIncome || 0) %>', '<%= ((data.tourIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
-    ['Pendapatan Airport', '<%= (data.airportIncome || 0) %>', '<%= ((data.airportIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Pendapatan Rental', '<%= (rentalIncome || 0) %>', '<%= ((rentalIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Pendapatan Tour', '<%= (tourIncome || 0) %>', '<%= ((tourIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Pendapatan Airport', '<%= (airportIncome || 0) %>', '<%= ((airportIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
     ['Total Pendapatan', '<%= totalRevenue %>', '100%'],
     ['PENGELUARAN', '', ''],
-    ['Pengeluaran Operasional', '<%= (data.operationalExpenses || 0) %>', '<%= ((data.operationalExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
-    ['Gaji Karyawan', '<%= (data.salaryExpenses || 0) %>', '<%= ((data.salaryExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
-    ['Komisi Driver', '<%= (data.driverCommission || 0) %>', '<%= ((data.driverCommission || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Pengeluaran Operasional', '<%= (operationalExpenses || 0) %>', '<%= ((operationalExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Gaji Karyawan', '<%= (salaryExpenses || 0) %>', '<%= ((salaryExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Komisi Driver', '<%= (driverCommission || 0) %>', '<%= ((driverCommission || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
     ['Total Pengeluaran', '<%= totalExpenses %>', '100%'],
     ['LABA BERSIH', '<%= netProfit %>', '<%= profitMargin %>%']
   ];

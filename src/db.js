@@ -1562,6 +1562,8 @@ module.exports = {
   getTransactions,
   getExpenses,
   financeSummary,
+  getFinancialSummary,
+  getFinanceByCategory,
   createTransaction,
   calculatePayroll,
   getFinancialSummary,
