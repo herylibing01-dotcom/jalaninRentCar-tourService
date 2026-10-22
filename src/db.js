@@ -6,9 +6,12 @@ const { quote, driverOvertime, lateReturnFee } = require("./finance");
 const APP_NAME = "Jalanin Rent Car & Tour Service";
 
 // Support Railway volume mount for persistent storage
+// Netlify Functions use /tmp (temporary - data will be lost)
 const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH 
   ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "data")
-  : path.join(__dirname, "..", "data");
+  : process.env.NETLIFY
+    ? path.join("/tmp", "data")
+    : path.join(__dirname, "..", "data");
 const DB_PATH = path.join(DATA_DIR, "db.json");
 
 function load() {

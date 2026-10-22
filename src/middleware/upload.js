@@ -3,9 +3,12 @@ const path = require("path");
 const multer = require("multer");
 
 // Support Railway volume mount for persistent uploads
+// Netlify Functions don't support persistent file system - will use /tmp for temporary storage
 const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH
   ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "public", "uploads")
-  : path.join(__dirname, "..", "..", "public", "uploads");
+  : process.env.NETLIFY
+    ? path.join("/tmp", "uploads")
+    : path.join(__dirname, "..", "..", "public", "uploads");
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

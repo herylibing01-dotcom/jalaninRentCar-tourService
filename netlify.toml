@@ -1,0 +1,15 @@
+[build]
+  command = "npm install"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[dev]
+  command = "node src/server.js"
+  port = 3000

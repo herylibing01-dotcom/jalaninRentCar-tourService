@@ -24,10 +24,12 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files from correct location (support Railway volume)
+// Serve static files from correct location (support Railway volume and Netlify)
 const publicDir = process.env.RAILWAY_VOLUME_MOUNT_PATH
   ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "public")
-  : path.join(__dirname, "..", "public");
+  : process.env.NETLIFY
+    ? path.join(__dirname, "..", "public")
+    : path.join(__dirname, "..", "public");
 app.use(express.static(publicDir));
 
 app.use(
@@ -149,4 +151,10 @@ async function start() {
   });
 }
 
-start();
+// Only start server if not running in serverless environment (Netlify)
+if (require.main === module) {
+  start();
+}
+
+// Export app for Netlify Functions
+module.exports = app;

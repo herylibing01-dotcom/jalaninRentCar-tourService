@@ -2,7 +2,8 @@
 
 ## Pilihan Platform:
 1. **Railway** (Rekomendasi) - Lebih mudah untuk Node.js dengan file system
-2. **Vercel** - Bagus untuk frontend, tapi butuh konfigurasi khusus untuk file system
+2. **Netlify** - Bagus untuk frontend, butuh database eksternal untuk backend
+3. **Vercel** - Bagus untuk frontend, tapi butuh konfigurasi khusus untuk file system
 
 ---
 
@@ -64,7 +65,53 @@ const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 
 ---
 
-## OPSI 2: DEPLOYMENT KE VERCEL
+## OPSI 2: DEPLOYMENT KE NETLIFY
+
+### Kelebihan Netlify:
+- ✅ Gratis untuk personal projects
+- ✅ Deploy otomatis dari GitHub
+- ✅ Fast globally distributed CDN
+- ✅ Great untuk frontend static sites
+
+### Kekurangan Netlify untuk Project Ini:
+- ❌ Functions tidak menyediakan file system persistent
+- ❌ Database JSON akan reset setiap cold start (data hilang)
+- ❌ Upload gambar tidak tersimpan permanen (perlu cloud storage)
+- ❌ **HARUS migrasi ke database eksternal** untuk production
+
+### Langkah-langkah (Hanya untuk Testing):
+
+#### 1. Install Dependencies
+```bash
+npm install serverless-http
+```
+
+#### 2. Sign Up di Netlify
+- Buka: https://app.netlify.com
+- Sign up dengan GitHub (gratis)
+
+#### 3. Import Project
+- Klik "Add new site" → "Import an existing project"
+- Pilih repository: `herylibing01-dotcom/jalaninRentCar-tourService`
+- Klik "Import site"
+
+#### 4. Setup Environment Variables
+```
+PORT=3000
+SESSION_SECRET=generate-random-secret-here
+NODE_ENV=production
+NETLIFY=true
+```
+
+#### 5. Deploy
+- Klik "Deploy site"
+- Website akan live di: `https://your-site-name.netlify.app`
+
+**CATATAN PENTING**: Lihat panduan lengkap di `NETLIFY_DEPLOYMENT.md` untuk migrasi ke database eksternal.
+
+---
+
+## OPSI 3: DEPLOYMENT KE VERCEL
 
 ### Kelebihan Vercel:
 - ✅ Gratis untuk personal projects
@@ -105,7 +152,7 @@ const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 
 ---
 
-## OPSI 3: DEPLOYMENT KE RENDER (FREE TIER TIDAK TERSEDIA)
+## OPSI 4: DEPLOYMENT KE RENDER (FREE TIER TIDAK TERSEDIA)
 
 Render menawarkan free tier untuk web services, tapi:
 - Free tier sudah tidak tersedia untuk user baru
@@ -119,6 +166,13 @@ Render menawarkan free tier untuk web services, tapi:
 ### Untuk Railway (Gratis):
 - Gunakan Railway PostgreSQL (gratis untuk project kecil)
 - Update `src/db.js` untuk menggunakan PostgreSQL
+
+### Untuk Netlify:
+- **WAJIB** gunakan database eksternal:
+  - MongoDB Atlas (free tier 512MB)
+  - Supabase (PostgreSQL gratis)
+  - PlanetScale (MySQL gratis)
+- Lihat panduan lengkap di `NETLIFY_DEPLOYMENT.md`
 
 ### Untuk Vercel:
 - Gunakan MongoDB Atlas (free tier 512MB)
