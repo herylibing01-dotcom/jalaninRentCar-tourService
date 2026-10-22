@@ -23,7 +23,12 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "..", "public")));
+
+// Serve static files from correct location (support Railway volume)
+const publicDir = process.env.RAILWAY_VOLUME_MOUNT_PATH
+  ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "public")
+  : path.join(__dirname, "..", "public");
+app.use(express.static(publicDir));
 
 app.use(
   session({

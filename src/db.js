@@ -4,7 +4,11 @@ const bcrypt = require("bcryptjs");
 const { quote, driverOvertime, lateReturnFee } = require("./finance");
 
 const APP_NAME = "Jalanin Rent Car & Tour Service";
-const DATA_DIR = path.join(__dirname, "..", "data");
+
+// Support Railway volume mount for persistent storage
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH 
+  ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "data")
+  : path.join(__dirname, "..", "data");
 const DB_PATH = path.join(DATA_DIR, "db.json");
 
 function load() {

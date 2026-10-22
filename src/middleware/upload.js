@@ -2,7 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 
-const uploadDir = path.join(__dirname, "..", "..", "public", "uploads");
+// Support Railway volume mount for persistent uploads
+const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH
+  ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "public", "uploads")
+  : path.join(__dirname, "..", "..", "public", "uploads");
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
