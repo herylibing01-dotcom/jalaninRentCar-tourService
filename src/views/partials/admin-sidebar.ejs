@@ -2,6 +2,7 @@
   const current = typeof page !== "undefined" ? page : "";
   const groups = {
     ringkasan: ["dashboard", "testimonials", "traffic"],
+    penugasan: ["assignments", "drivers", "staff"],
     keuangan: ["payroll", "payments", "employees"],
     pengaturan: ["fleet", "pricing", "zones"],
   };
@@ -42,6 +43,22 @@
     <a href="/admin/pesanan" class="block rounded-lg px-3 py-2 text-sm hover:bg-slate-800 <%= current === 'orders' ? 'bg-slate-800 text-white' : '' %>">Pesanan Masuk</a>
 
     <a href="/admin/direct-booking" class="block rounded-lg px-3 py-2 text-sm hover:bg-slate-800 <%= current === 'direct-booking' ? 'bg-slate-800 text-white' : '' %>">Direct Booking</a>
+
+    <div data-menu class="<%= groupOpen('penugasan') ? 'is-open' : '' %>">
+      <button type="button" class="<%= parentClass('penugasan') %>" data-menu-toggle aria-expanded="<%= groupOpen('penugasan') ? 'true' : 'false' %>">
+        <span>Penugasan</span>
+        <svg class="menu-chevron h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="menu-panel">
+        <div class="overflow-hidden">
+          <a href="/admin/penugasan-aktif" class="<%= itemClass('assignments') %>">Penugasan Aktif</a>
+          <a href="/admin/drivers" class="<%= itemClass('drivers') %>">Manajemen Driver</a>
+          <a href="/admin/staff" class="<%= itemClass('staff') %>">Manajemen Staf</a>
+        </div>
+      </div>
+    </div>
 
     <div data-menu class="<%= groupOpen('keuangan') ? 'is-open' : '' %>">
       <button type="button" class="<%= parentClass('keuangan') %>" data-menu-toggle aria-expanded="<%= groupOpen('keuangan') ? 'true' : 'false' %>">

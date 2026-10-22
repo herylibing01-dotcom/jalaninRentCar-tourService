@@ -41,6 +41,81 @@ router.get("/direct-booking", (req, res) => {
   });
 });
 
+router.get("/penugasan-aktif", (req, res) => {
+  const orders = db.getOrders();
+  res.render("admin/assignments", {
+    title: "Penugasan Aktif",
+    orders,
+  });
+});
+
+router.get("/drivers", (req, res) => {
+  const employees = db.getEmployees();
+  const orders = db.getOrders();
+  const activeDriverIds = orders
+    .filter(o => ['siap_jalan', 'sedang_dalam_perjalanan'].includes(o.status) && o.assignedEmployeeId)
+    .map(o => o.assignedEmployeeId);
+  
+  const driverCommissions = {};
+  const activeOrderCounts = {};
+  
+  orders.forEach(order => {
+    if (order.assignedEmployeeId) {
+      if (!activeOrderCounts[order.assignedEmployeeId]) {
+        activeOrderCounts[order.assignedEmployeeId] = 0;
+      }
+      if (['siap_jalan', 'sedang_dalam_perjalanan'].includes(order.status)) {
+        activeOrderCounts[order.assignedEmployeeId]++;
+      }
+    }
+  });
+  
+  res.render("admin/drivers", {
+    title: "Manajemen Driver",
+    drivers: employees,
+    activeDriverIds,
+    driverCommissions,
+    activeOrderCounts,
+  });
+});
+
+router.get("/staff", (req, res) => {
+  const employees = db.getEmployees();
+  const orders = db.getOrders();
+  const staffList = employees.filter(e => e.jobRole === 'staff' || e.position === 'Staf Lapangan');
+  const activeStaffIds = orders
+    .filter(o => ['siap_jalan', 'sedang_dalam_perjalanan'].includes(o.status) && o.assignedEmployeeId)
+    .map(o => o.assignedEmployeeId);
+  
+  const staffTaskCounts = {};
+  const activeOrderCounts = {};
+  
+  orders.forEach(order => {
+    if (order.assignedEmployeeId) {
+      if (!staffTaskCounts[order.assignedEmployeeId]) {
+        staffTaskCounts[order.assignedEmployeeId] = 0;
+      }
+      if (!activeOrderCounts[order.assignedEmployeeId]) {
+        activeOrderCounts[order.assignedEmployeeId] = 0;
+      }
+      if (order.status === 'selesai') {
+        staffTaskCounts[order.assignedEmployeeId]++;
+      }
+      if (['siap_jalan', 'sedang_dalam_perjalanan'].includes(order.status)) {
+        activeOrderCounts[order.assignedEmployeeId]++;
+      }
+    }
+  });
+  
+  res.render("admin/staff", {
+    title: "Manajemen Staf",
+    staffList,
+    activeStaffIds,
+    staffTaskCounts,
+    activeOrderCounts,
+  });
+});
+
 router.post("/direct-booking", (req, res) => {
   const body = req.body || {};
   const customerName = String(body.customerName || "").trim();
@@ -218,10 +293,40 @@ router.post("/pesanan/:id/konfirmasi-pembayaran", (req, res) => {
   res.redirect("/admin/pesanan");
 });
 
+router.post("/pesanan/:id/siap-jalan", (req, res) => {
+  const success = db.updateOrderStatus(req.params.id, "siap_jalan");
+  if (success) {
+    req.session.flash = { type: "success", message: "Pesanan ditandai siap jalan. Driver/Staf sudah dikonfirmasi." };
+  } else {
+    req.session.flash = { type: "error", message: "Pesanan tidak ditemukan." };
+  }
+  res.redirect("/admin/pesanan");
+});
+
 router.post("/pesanan/:id/mulai-perjalanan", (req, res) => {
-  const success = db.updateOrderStatus(req.params.id, "dalam_perjalanan");
+  const success = db.updateOrderStatus(req.params.id, "sedang_dalam_perjalanan");
   if (success) {
     req.session.flash = { type: "success", message: "Pesanan ditandai sedang dalam perjalanan." };
+  } else {
+    req.session.flash = { type: "error", message: "Pesanan tidak ditemukan." };
+  }
+  res.redirect("/admin/pesanan");
+});
+
+router.post("/pesanan/:id/reschedule", (req, res) => {
+  const success = db.updateOrderStatus(req.params.id, "reschedule");
+  if (success) {
+    req.session.flash = { type: "success", message: "Pesanan ditandai sebagai reschedule." };
+  } else {
+    req.session.flash = { type: "error", message: "Pesanan tidak ditemukan." };
+  }
+  res.redirect("/admin/pesanan");
+});
+
+router.post("/pesanan/:id/cancel", (req, res) => {
+  const success = db.updateOrderStatus(req.params.id, "cancel");
+  if (success) {
+    req.session.flash = { type: "success", message: "Pesanan dibatalkan." };
   } else {
     req.session.flash = { type: "error", message: "Pesanan tidak ditemukan." };
   }

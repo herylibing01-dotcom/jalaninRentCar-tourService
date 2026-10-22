@@ -1,0 +1,88 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'assignments' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Penugasan Aktif</h1>
+    <p class="mt-1 text-slate-500">Monitoring penugasan driver dan staf yang sedang berjalan</p>
+    <%- include('../partials/flash') %>
+
+    <!-- Summary Cards -->
+    <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-teal-500">
+        <p class="text-sm text-slate-500">Siap Jalan</p>
+        <p class="mt-2 text-2xl font-semibold text-teal-700"><%= orders.filter(o => o.status === 'siap_jalan').length %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-blue-500">
+        <p class="text-sm text-slate-500">Sedang Dalam Perjalanan</p>
+        <p class="mt-2 text-2xl font-semibold text-blue-700"><%= orders.filter(o => o.status === 'sedang_dalam_perjalanan').length %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-emerald-500">
+        <p class="text-sm text-slate-500">Selesai Hari Ini</p>
+        <p class="mt-2 text-2xl font-semibold text-emerald-700"><%= orders.filter(o => o.status === 'selesai').length %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-purple-500">
+        <p class="text-sm text-slate-500">Total Driver/Staf Aktif</p>
+        <p class="mt-2 text-2xl font-semibold text-purple-700"><%= orders.filter(o => o.assignedEmployeeId).length %></p>
+      </article>
+    </section>
+
+    <!-- Active Assignments -->
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <div class="p-4 border-b border-slate-200">
+        <h2 class="font-semibold text-slate-900">Penugasan yang Sedang Berjalan</h2>
+      </div>
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">ID</th>
+            <th class="px-4 py-3">Pelanggan</th>
+            <th class="px-4 py-3">Armada</th>
+            <th class="px-4 py-3">Driver/Staf</th>
+            <th class="px-4 py-3">Tgl Mulai</th>
+            <th class="px-4 py-3">Tgl Selesai</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% const activeOrders = orders.filter(o => ['siap_jalan', 'sedang_dalam_perjalanan'].includes(o.status)); %>
+          <% if (!activeOrders.length) { %>
+            <tr><td colspan="8" class="px-4 py-8 text-center text-slate-500">Tidak ada penugasan aktif saat ini.</td></tr>
+          <% } %>
+          <% activeOrders.forEach((order) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3">#<%= order.id %></td>
+              <td class="px-4 py-3">
+                <p class="font-medium text-slate-900"><%= order.customerName %></p>
+                <p class="text-xs text-slate-500"><%= order.customerPhone %></p>
+              </td>
+              <td class="px-4 py-3"><%= order.details?.vehicleName || '-' %></td>
+              <td class="px-4 py-3"><%= order.assignedEmployeeName || '-' %></td>
+              <td class="px-4 py-3"><%= order.details?.pickupDate || '-' %></td>
+              <td class="px-4 py-3"><%= order.details?.dropoffDate || '-' %></td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-3 py-1 text-xs font-medium <%= orderStatusColor(order.status) %>">
+                  <%= orderStatusLabel(order.status) %>
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <% if (driverTaskLink(order)) { %>
+                  <a href="<%= driverWhatsAppLink(order, order.assignedEmployeeName) %>" target="_blank" class="text-xs font-semibold text-emerald-700 mr-2">WA Driver</a>
+                <% } %>
+                <% if (staffCheckLink(order)) { %>
+                  <a href="<%= staffWhatsAppLink(order, 'Staf') %>" target="_blank" class="text-xs font-semibold text-emerald-700">WA Staf</a>
+                <% } %>
+                <a href="/voucher/<%= order.id %>" class="text-xs font-semibold text-brand-700">Voucher</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

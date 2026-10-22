@@ -1,0 +1,68 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'staff' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Manajemen Staf Lapangan</h1>
+    <p class="mt-1 text-slate-500">Kelola data staf lapangan untuk serah terima lepas kunci</p>
+    <%- include('../partials/flash') %>
+
+    <!-- Staff Stats -->
+    <section class="mt-6 grid gap-4 sm:grid-cols-3">
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">Total Staf</p>
+        <p class="mt-2 text-2xl font-semibold text-slate-900"><%= staffList.length %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">Sedang Bertugas</p>
+        <p class="mt-2 text-2xl font-semibold text-blue-700"><%= staffList.filter(s => activeStaffIds.includes(s.id)).length %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">Tersedia</p>
+        <p class="mt-2 text-2xl font-semibold text-emerald-700"><%= staffList.filter(s => !activeStaffIds.includes(s.id)).length %></p>
+      </article>
+    </section>
+
+    <!-- Staff List -->
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Nama</th>
+            <th class="px-4 py-3">No. HP</th>
+            <th class="px-4 py-3">Gaji Pokok</th>
+            <th class="px-4 py-3">Total Tugas</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Penugasan Aktif</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% staffList.forEach((staff) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3 font-medium text-slate-900"><%= staff.name %></td>
+              <td class="px-4 py-3"><%= staff.phone %></td>
+              <td class="px-4 py-3"><%= rupiah(staff.baseSalary) %></td>
+              <td class="px-4 py-3"><%= staffTaskCounts[staff.id] || 0 %> tugas</td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-3 py-1 text-xs font-medium <%= activeStaffIds.includes(staff.id) ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700' %>">
+                  <%= activeStaffIds.includes(staff.id) ? 'Bertugas' : 'Tersedia' %>
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <% if (activeStaffIds.includes(staff.id)) { %>
+                  <span class="text-xs text-slate-500">Sedang bertugas pada <%= activeOrderCounts[staff.id] || 0 %> pesanan</span>
+                <% } else { %>
+                  <span class="text-xs text-slate-400">Tidak ada penugasan aktif</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

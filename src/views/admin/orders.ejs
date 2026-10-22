@@ -13,7 +13,8 @@
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 text-white" data-status="all">Semua</button>
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="tunggu_pembayaran">Tunggu Pembayaran</button>
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="terkonfirmasi">Terkonfirmasi</button>
-      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="dalam_perjalanan">Dalam Perjalanan</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="siap_jalan">Siap Jalan</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="sedang_dalam_perjalanan">Sedang Dalam Perjalanan</button>
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="selesai">Selesai</button>
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="reschedule">Reschedule</button>
       <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="cancel">Cancel</button>
@@ -152,12 +153,22 @@
                 <button class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700">Konfirmasi Pembayaran</button>
               </form>
             <% } %>
-            <% if (order.status === 'terkonfirmasi') { %>
+            <% if (order.status === 'terkonfirmasi' && order.assignedEmployeeId) { %>
+              <form action="/admin/pesanan/<%= order.id %>/siap-jalan" method="post" class="inline">
+                <button class="px-3 py-1.5 bg-teal-600 text-white rounded-lg text-xs font-medium hover:bg-teal-700">Siap Jalan</button>
+              </form>
+            <% } %>
+            <% if (order.status === 'siap_jalan') { %>
               <form action="/admin/pesanan/<%= order.id %>/mulai-perjalanan" method="post" class="inline">
                 <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700">Mulai Perjalanan</button>
               </form>
             <% } %>
-            <% if (order.status === 'terkonfirmasi' || order.status === 'dalam_perjalanan') { %>
+            <% if (order.status === 'sedang_dalam_perjalanan') { %>
+              <form action="/admin/pesanan/<%= order.id %>/selesai" method="post" class="inline">
+                <button class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700">Selesaikan</button>
+              </form>
+            <% } %>
+            <% if (order.status === 'terkonfirmasi' || order.status === 'siap_jalan' || order.status === 'sedang_dalam_perjalanan') { %>
               <form action="/admin/pesanan/<%= order.id %>/reschedule" method="post" class="inline" onsubmit="return confirm('Tandai pesanan ini sebagai reschedule?')">
                 <button class="px-3 py-1.5 bg-orange-600 text-white rounded-lg text-xs font-medium hover:bg-orange-700">Reschedule</button>
               </form>
