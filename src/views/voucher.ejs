@@ -2,7 +2,15 @@
 <% const details = order.details || {}; %>
 <%- include('partials/breadcrumb') %>
 <main class="min-h-screen bg-slate-200 px-3 py-6">
-  <article class="mx-auto max-w-3xl bg-white shadow-lg">
+  <article class="mx-auto max-w-3xl bg-white shadow-lg relative">
+    <!-- Kembali Button -->
+    <a href="/" class="absolute top-4 right-4 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors z-10">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7" />
+      </svg>
+      Kembali
+    </a>
+
     <header class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700"><%= t('voucher.kicker') %></p>
@@ -163,6 +171,14 @@
       <p data-lock class="<%= editExpired ? '' : 'hidden' %> rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">Pesanan Tidak Dapat Diubah</p>
       <a href="/" class="rounded-xl bg-sky-800 px-4 py-3 text-sm font-semibold text-white hover:bg-sky-900">Kembali ke Beranda</a>
       
+      <!-- Share Link Button -->
+      <button onclick="shareVoucherLink()" class="rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.317-1.316C8.836 10.518 8.684 10.018 8.684 9c0-1.018-.168-1.518-.317-1.684C8.836 6.482 8.886 5.982 9 5.5c0-.482.114-.938.317-1.316C9.114 3.982 9 3.482 9 3c0-1.018.114-1.518.317-1.684C9.5 1.318 9.5 1.318 9.5 1.318M12 2a5 5 0 100-10 5 5 0 000 10zm0 10a5 5 0 100-10 5 5 0 000 10zm0-10a3 3 0 100-6 3 3 0 000 6zm0 6a3 3 0 100-6 3 3 0 000 6z" />
+        </svg>
+        Share Link
+      </button>
+      
       <!-- WhatsApp Share Buttons -->
       <% if (driverTaskLink(order) && order.assignedEmployeeName) { %>
         <a href="<%= driverWhatsAppLink(order, order.assignedEmployeeName) %>" target="_blank" rel="noopener"
@@ -204,5 +220,61 @@
   </article>
 </main>
 <script src="/js/edit-order.js"></script>
+
+<script>
+// Share voucher link function
+function shareVoucherLink() {
+  const voucherUrl = window.location.href;
+  const voucherId = '<%= order.id %>';
+  
+  // Try Web Share API first (mobile friendly)
+  if (navigator.share) {
+    navigator.share({
+      title: 'Voucher Jalanin Rent Car',
+      text: `Voucher untuk pesanan #${voucherId}`,
+      url: voucherUrl
+    }).catch(err => {
+      console.log('Share failed:', err);
+      // Fallback to clipboard copy
+      copyToClipboard(voucherUrl);
+    });
+  } else {
+    // Fallback to clipboard copy
+    copyToClipboard(voucherUrl);
+  }
+}
+
+// Copy to clipboard function
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Link voucher berhasil disalin ke clipboard!');
+    }).catch(err => {
+      console.error('Clipboard error:', err);
+      promptFallbackCopy(text);
+    });
+  } else {
+    promptFallbackCopy(text);
+  }
+}
+
+// Fallback for older browsers
+function promptFallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    alert('Link voucher berhasil disalin ke clipboard!');
+  } catch (err) {
+    console.error('Copy failed:', err);
+    alert('Gagal menyalin link. Silakan copy manual: ' + text);
+  }
+  document.body.removeChild(textArea);
+}
+</script>
 </body>
 </html>
