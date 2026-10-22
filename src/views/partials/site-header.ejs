@@ -1,0 +1,25 @@
+<header class="relative z-20 border-b border-white/20 bg-white/80 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+    <a href="/" class="brand-logo flex min-w-0 items-center gap-2">
+      <%- include('logo') %>
+      <span class="truncate text-sm font-semibold text-brand-800 sm:text-base"><%= brand %></span>
+    </a>
+    <nav class="flex items-center gap-3 text-sm sm:gap-5">
+      <a href="/" class="<%= typeof page !== 'undefined' && page === 'home' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.home') %></a>
+      <a href="/katalog" class="<%= typeof page !== 'undefined' && page === 'catalog' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.fleet') %></a>
+      <a href="#ulasan" class="text-slate-600 hover:text-brand-700">Lihat Ulasan</a>
+      <% if (user && user.role === 'customer') { %>
+        <a href="/pesanan" class="<%= typeof page !== 'undefined' && page === 'bookings' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.orders') %></a>
+      <% } %>
+      <% if (user) { %>
+        <form action="/logout" method="post">
+          <button class="rounded-full border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50"><%= t('nav.logout') %></button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="rounded-full bg-brand-600 px-3 py-1.5 font-medium text-white hover:bg-brand-700"><%= t('nav.login') %></a>
+      <% } %>
+      <%- include('language-switcher') %>
+    </nav>
+  </div>
+</header>
+<%- include('breadcrumb') %>

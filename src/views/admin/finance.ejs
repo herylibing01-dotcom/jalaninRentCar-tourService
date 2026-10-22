@@ -1,0 +1,174 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'finance' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Keuangan</h1>
+    <p class="mt-1 text-slate-500">Dashboard keuangan Jalanin Rent Car &amp; Tour Service. Data tersinkronisasi dengan status pesanan secara otomatis.</p>
+    <%- include('../partials/flash') %>
+
+    <!-- Filter Section -->
+    <div class="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <h2 class="font-semibold text-slate-900 mb-4">Filter Periode</h2>
+      <form action="/admin/keuangan" method="get" class="flex flex-wrap gap-4">
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Filter</label>
+          <select name="filterType" class="rounded-xl border border-slate-200 px-3 py-2">
+            <option value="month" <%= filterType === 'month' ? 'selected' : '' %>>Bulan Ini</option>
+            <option value="dateRange" <%= filterType === 'dateRange' ? 'selected' : '' %>>Rentang Tanggal</option>
+            <option value="year" <%= filterType === 'year' ? 'selected' : '' %>>Tahun Ini</option>
+          </select>
+        </div>
+        <% if (filterType === 'dateRange') { %>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Dari</label>
+          <input type="date" name="startDate" value="<%= startDate || '' %>" class="rounded-xl border border-slate-200 px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Sampai</label>
+          <input type="date" name="endDate" value="<%= endDate || '' %>" class="rounded-xl border border-slate-200 px-3 py-2">
+        </div>
+        <% } else if (filterType === 'year') { %>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Tahun</label>
+          <select name="year" class="rounded-xl border border-slate-200 px-3 py-2">
+            <% for (let y = new Date().getFullYear(); y >= new Date().getFullYear() - 5; y--) { %>
+              <option value="<%= y %>" <%= year == y ? 'selected' : '' %>><%= y %></option>
+            <% } %>
+          </select>
+        </div>
+        <% } %>
+        <div class="self-end">
+          <button type="submit" class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700">Terapkan Filter</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Summary Metrics -->
+    <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-emerald-500">
+        <p class="text-sm text-slate-500">Total Pendapatan Kotor</p>
+        <p class="mt-2 text-2xl font-semibold text-emerald-700"><%= rupiah(summary.totalIncome) %></p>
+        <p class="mt-1 text-xs text-slate-400">Periode: <%= summary.period %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-rose-500">
+        <p class="text-sm text-slate-500">Total Pengeluaran</p>
+        <p class="mt-2 text-2xl font-semibold text-rose-700"><%= rupiah(summary.totalExpenses) %></p>
+        <p class="mt-1 text-xs text-slate-400">Operasional + Gaji + Komisi</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-brand-500">
+        <p class="text-sm text-slate-500">Pendapatan Bersih</p>
+        <p class="mt-2 text-2xl font-semibold <%= summary.netProfit >= 0 ? 'text-brand-700' : 'text-rose-700' %>"><%= rupiah(summary.netProfit) %></p>
+        <p class="mt-1 text-xs text-slate-400">Net Profit</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-blue-500">
+        <p class="text-sm text-slate-500">Total Gaji & Komisi</p>
+        <p class="mt-2 text-2xl font-semibold text-blue-700"><%= rupiah(summary.payroll.total) %></p>
+        <p class="mt-1 text-xs text-slate-400">Karyawan ditugaskan</p>
+      </article>
+    </section>
+
+    <!-- Income Breakdown -->
+    <section class="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <h2 class="font-semibold text-slate-900 mb-4">Rincian Pendapatan</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-xl bg-emerald-50 p-4">
+          <p class="text-sm text-emerald-700">Pendapatan Rental</p>
+          <p class="mt-2 text-xl font-semibold text-emerald-900"><%= rupiah(summary.incomeBreakdown.rental) %></p>
+        </div>
+        <div class="rounded-xl bg-emerald-50 p-4">
+          <p class="text-sm text-emerald-700">Pendapatan Tour</p>
+          <p class="mt-2 text-xl font-semibold text-emerald-900"><%= rupiah(summary.incomeBreakdown.tour) %></p>
+        </div>
+        <div class="rounded-xl bg-emerald-50 p-4">
+          <p class="text-sm text-emerald-700">Pendapatan Airport</p>
+          <p class="mt-2 text-xl font-semibold text-emerald-900"><%= rupiah(summary.incomeBreakdown.airport) %></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Expense Breakdown -->
+    <section class="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <h2 class="font-semibold text-slate-900 mb-4">Rincian Pengeluaran</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-xl bg-rose-50 p-4">
+          <p class="text-sm text-rose-700">Pengeluaran Operasional</p>
+          <p class="mt-2 text-xl font-semibold text-rose-900"><%= rupiah(summary.expenseBreakdown.operational) %></p>
+          <p class="mt-1 text-xs text-rose-600">Maintenance, bensin, dll</p>
+        </div>
+        <div class="rounded-xl bg-rose-50 p-4">
+          <p class="text-sm text-rose-700">Gaji Karyawan</p>
+          <p class="mt-2 text-xl font-semibold text-rose-900"><%= rupiah(summary.expenseBreakdown.salary) %></p>
+          <p class="mt-1 text-xs text-rose-600">Gaji pokok</p>
+        </div>
+        <div class="rounded-xl bg-rose-50 p-4">
+          <p class="text-sm text-rose-700">Komisi Driver</p>
+          <p class="mt-2 text-xl font-semibold text-rose-900"><%= rupiah(summary.expenseBreakdown.commission) %></p>
+          <p class="mt-1 text-xs text-rose-600">Komisi sopir</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Expense Form -->
+    <form action="/admin/keuangan/pengeluaran" method="post" class="mt-6 grid gap-3 rounded-2xl bg-white p-5 shadow-sm sm:grid-cols-2">
+      <h2 class="sm:col-span-2 font-semibold text-slate-900">Catat Pengeluaran Operasional</h2>
+      <select name="category" class="rounded-xl border border-slate-200 px-3 py-2">
+        <option value="operasional">Operasional</option>
+        <option value="maintenance">Maintenance Armada</option>
+        <option value="gaji">Gaji Karyawan</option>
+        <option value="komisi_sopir">Komisi Sopir</option>
+      </select>
+      <input name="amount" type="number" min="1" required placeholder="Nominal" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="date" type="date" value="<%= today %>" required class="rounded-xl border border-slate-200 px-3 py-2" />
+      <select name="status" class="rounded-xl border border-slate-200 px-3 py-2">
+        <option value="calon">Calon pengeluaran</option>
+        <option value="terbayar">Sudah dibayar</option>
+      </select>
+      <input name="description" required placeholder="Keterangan pengeluaran" class="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2" />
+      <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 sm:col-span-2">Simpan ke Buku Kas</button>
+    </form>
+
+    <!-- Cash Book Table -->
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <div class="p-4 border-b border-slate-200">
+        <h2 class="font-semibold text-slate-900">Buku Kas</h2>
+        <p class="text-sm text-slate-500">Arus kas masuk dan keluar</p>
+      </div>
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Tanggal</th>
+            <th class="px-4 py-3">Arus</th>
+            <th class="px-4 py-3">Kategori</th>
+            <th class="px-4 py-3">Keterangan</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3 text-right">Jumlah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!rows.length) { %>
+            <tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">Belum ada arus kas pada periode ini.</td></tr>
+          <% } %>
+          <% rows.forEach((row) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3"><%= row.date %></td>
+              <td class="px-4 py-3 font-medium <%= row.direction === 'masuk' ? 'text-emerald-700' : 'text-rose-700' %>">
+                <%= row.direction === 'masuk' ? 'Masuk (+)' : 'Keluar (-)' %>
+              </td>
+              <td class="px-4 py-3"><%= expenseCategoryLabel(row.category) %></td>
+              <td class="px-4 py-3"><%= row.description %><% if (row.orderId) { %> <span class="text-slate-400">#<%= row.orderId %></span><% } %></td>
+              <td class="px-4 py-3"><%= row.status %></td>
+              <td class="px-4 py-3 text-right font-semibold <%= row.direction === 'masuk' ? 'text-emerald-700' : 'text-rose-700' %>">
+                <%= row.direction === 'masuk' ? '+' : '-' %><%= rupiah(row.amount) %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'zones' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+      <h1 class="text-2xl font-semibold text-slate-900">Zona &amp; Tarif</h1>
+      <p class="mt-1 text-slate-500">Zona 1 dekat, Zona 2 sedang, dan Zona 3 jauh untuk airport transfer, sewa kendaraan, dan antar-jemput mobil.</p>
+      <%- include('../partials/flash') %>
+      <form action="/admin/zona" method="post" class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-slate-500">
+            <tr>
+              <th class="px-4 py-3">Layanan</th>
+              <th class="px-4 py-3">Zona</th>
+              <th class="px-4 py-3">Harga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% const serviceLabelMap = { airport: 'Airport Transfer', rental: 'Sewa Kendaraan', antar_jemput: 'Antar-Jemput Mobil' }; %>
+            <% tariffs.forEach((tariff) => { %>
+              <tr class="border-t border-slate-100">
+                <td class="px-4 py-3"><%= serviceLabelMap[tariff.service] || tariff.service %></td>
+                <td class="px-4 py-3"><%= tariff.label %></td>
+                <td class="px-4 py-3">
+                  <input type="hidden" name="id" value="<%= tariff.id %>" />
+                  <input name="price" type="number" min="0" value="<%= tariff.price %>" class="w-40 rounded-xl border border-slate-200 px-3 py-2" />
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <div class="p-4">
+          <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white">Simpan tarif</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

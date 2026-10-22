@@ -1,0 +1,60 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'settings' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Pengaturan Perusahaan</h1>
+    <p class="mt-1 text-slate-500">Perbarui email dan telepon yang tampil di situs, lalu kelola rekening untuk pembayaran Transfer Bank.</p>
+    <%- include('../partials/flash') %>
+
+    <form action="/admin/pengaturan" method="post" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+      <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">Email perusahaan</label>
+        <input name="email" type="email" required value="<%= settings.email %>" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">Nomor telepon</label>
+        <input name="phone" required value="<%= settings.phone %>" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="mb-1 block text-sm font-medium text-slate-700">Lokasi perusahaan</label>
+        <textarea name="address" required rows="2" class="w-full rounded-xl border border-slate-200 px-3 py-2"><%= settings.address %></textarea>
+      </div>
+      <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 sm:col-span-2 sm:w-fit">Simpan kontak</button>
+    </form>
+
+    <h2 class="mt-10 text-lg font-semibold text-slate-900"><%= editing ? 'Ubah rekening' : 'Tambah rekening bank' %></h2>
+    <form action="/admin/pengaturan/rekening" method="post" class="mt-4 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-3">
+      <% if (editing) { %><input type="hidden" name="id" value="<%= editing.id %>" /><% } %>
+      <input name="nama_bank" required value="<%= editing ? editing.nama_bank : '' %>" placeholder="Nama bank" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="nomor_rekening" required value="<%= editing ? editing.nomor_rekening : '' %>" placeholder="Nomor rekening" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="atas_nama" required value="<%= editing ? editing.atas_nama : '' %>" placeholder="Atas nama" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <button class="rounded-xl bg-orange-500 px-4 py-2 font-semibold text-white hover:bg-orange-600 sm:col-span-3 sm:w-fit"><%= editing ? 'Simpan perubahan' : 'Tambah rekening' %></button>
+    </form>
+
+    <div class="mt-6 space-y-3">
+      <% if (!accounts.length) { %>
+        <p class="rounded-2xl bg-white p-6 text-slate-500 shadow-sm">Belum ada rekening. Checkout Transfer Bank akan meminta customer memilih QRIS sampai rekening ditambahkan.</p>
+      <% } %>
+      <% accounts.forEach((account) => { %>
+        <article class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-5 shadow-sm">
+          <div>
+            <p class="font-semibold text-slate-900"><%= account.nama_bank %></p>
+            <p class="font-mono text-slate-700"><%= account.nomor_rekening %></p>
+            <p class="text-sm text-slate-500">a.n. <%= account.atas_nama %></p>
+          </div>
+          <div class="flex gap-2">
+            <a href="/admin/pengaturan?rekening=<%= account.id %>" class="rounded-lg border border-slate-200 px-3 py-2 text-sm">Ubah</a>
+            <form action="/admin/pengaturan/rekening/<%= account.id %>/hapus" method="post">
+              <button class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">Hapus</button>
+            </form>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

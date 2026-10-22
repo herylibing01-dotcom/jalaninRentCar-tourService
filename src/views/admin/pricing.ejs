@@ -1,0 +1,100 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'pricing' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+      <h1 class="text-2xl font-semibold text-slate-900">Manajemen Tarif &amp; Harga</h1>
+      <p class="mt-1 text-slate-500">Semua nominal di bawah ini dibaca katalog, checkout, zona, dan denda pengembalian.</p>
+      <%- include('../partials/flash') %>
+
+      <form action="/admin/tarif" method="post" class="mt-8 space-y-8">
+        <section class="rounded-2xl bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Harga armada per hari</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <% vehicles.forEach((vehicle) => { %>
+              <label class="text-sm text-slate-600"><%= vehicle.name %>
+                <input name="vehicle_<%= vehicle.id %>" type="number" min="0" value="<%= vehicle.pricePerDay %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+              </label>
+            <% }) %>
+          </div>
+        </section>
+
+        <section class="rounded-2xl bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Tarif zona dan antar-jemput</h2>
+          <div class="mt-4 overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+              <thead class="text-slate-500">
+                <tr>
+                  <th class="px-2 py-2 font-medium">Layanan</th>
+                  <th class="px-2 py-2 font-medium">Zona</th>
+                  <th class="px-2 py-2 font-medium">Nominal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% const serviceName = { airport: 'Airport transfer', rental: 'Sewa kendaraan', antar_jemput: 'Antar-jemput mobil' }; %>
+                <% tariffs.forEach((item) => { %>
+                  <tr class="border-t border-slate-100">
+                    <td class="px-2 py-2"><%= serviceName[item.service] || item.service %></td>
+                    <td class="px-2 py-2"><%= item.label %></td>
+                    <td class="px-2 py-2">
+                      <input type="hidden" name="zoneId" value="<%= item.id %>" />
+                      <input name="zonePrice" type="number" min="0" value="<%= item.price %>" class="w-40 rounded-xl border border-slate-200 px-3 py-2" />
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="rounded-2xl bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Layanan sopir, All-In, dan denda</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <label class="text-sm text-slate-600">Tarif dasar airport
+              <input name="airportBase" type="number" min="0" value="<%= pricing.airportBase %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Jasa sopir per hari
+              <input name="driverDailyFee" type="number" min="0" value="<%= pricing.driverDailyFee %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Denda overtime (% tarif harian per jam)
+              <input name="overtimePercent" type="number" min="0" step="0.1" value="<%= pricing.overtimeRate * 100 %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Denda keterlambatan (% tarif harian per jam)
+              <input name="latePercent" type="number" min="0" step="0.1" value="<%= pricing.lateFeeRate * 100 %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Pengali Zona 1
+              <input name="mult1" type="number" min="0" step="0.1" value="<%= pricing.areaMultiplier.zona_1 %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Pengali Zona 2 (Ubud/Canggu)
+              <input name="mult2" type="number" min="0" step="0.1" value="<%= pricing.areaMultiplier.zona_2 %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="text-sm text-slate-600">Pengali Zona 3 (Kintamani/Singaraja)
+              <input name="mult3" type="number" min="0" step="0.1" value="<%= pricing.areaMultiplier.zona_3 %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <% pricing.addons.forEach((addon) => { %>
+              <label class="text-sm text-slate-600"><%= addon.label %>
+                <input name="addon_<%= addon.key %>" type="number" min="0" value="<%= addon.price %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+              </label>
+            <% }) %>
+          </div>
+        </section>
+
+        <section class="rounded-2xl bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Paket tour</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <% pricing.tours.forEach((tour, index) => { %>
+              <label class="text-sm text-slate-600"><%= tour.name %>
+                <input name="tour_<%= index %>" type="number" min="0" value="<%= tour.price %>" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+              </label>
+            <% }) %>
+          </div>
+        </section>
+
+        <button class="rounded-xl bg-brand-600 px-5 py-3 font-semibold text-white hover:bg-brand-700">Simpan semua harga</button>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<%- include('../partials/head') %>
+<%- include('../partials/site-header', { page: 'bookings' }) %>
+<% const details = order.details || {}; %>
+<main class="mx-auto max-w-xl px-4 py-10">
+  <h1 class="text-2xl font-semibold text-slate-900">Ubah jadwal penjemputan</h1>
+  <p class="mt-1 text-slate-500">Hanya tanggal dan jam penjemputan yang bisa diubah, paling lambat 1 jam setelah pesanan dibuat.</p>
+  <%- include('../partials/flash') %>
+
+  <p data-lock class="<%= editable ? 'hidden' : '' %> mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">Pesanan Tidak Dapat Diubah</p>
+
+  <form action="/pesanan/<%= order.id %>/ubah" method="post" data-deadline="<%= new Date(new Date(order.createdAt).getTime() + 60 * 60 * 1000).toISOString() %>" class="mt-6 space-y-4 rounded-3xl bg-white p-6 shadow-sm">
+    <div>
+      <label class="mb-1 block text-sm font-medium text-slate-700">Armada</label>
+      <input value="<%= details.vehicleName || 'Tidak ada perubahan armada' %>" disabled class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500" />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-slate-700">Tanggal penjemputan</label>
+      <input name="pickupDate" type="date" required value="<%= details.pickupDate || '' %>" <%= editable ? '' : 'disabled' %> class="w-full rounded-xl border border-slate-200 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100" />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-slate-700">Waktu/jam penjemputan</label>
+      <input name="pickupTime" type="time" required value="<%= details.pickupTime || '' %>" <%= editable ? '' : 'disabled' %> class="w-full rounded-xl border border-slate-200 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100" />
+    </div>
+    <button data-submit <%= editable ? '' : 'disabled' %> class="w-full rounded-xl bg-orange-500 py-3 font-semibold text-white enabled:hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-slate-300">Simpan jadwal</button>
+  </form>
+  <a href="/voucher/<%= order.id %>" class="mt-4 inline-block text-sm font-semibold text-brand-700">Kembali ke e-voucher</a>
+</main>
+<%- include('../partials/site-footer') %>
+<script src="/js/edit-order.js"></script>
+</body>
+</html>

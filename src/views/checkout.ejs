@@ -1,0 +1,51 @@
+<%- include('partials/head') %>
+<%- include('partials/site-header', { page: 'home' }) %>
+<main class="mx-auto max-w-3xl px-4 py-10">
+  <h1 class="text-2xl font-semibold text-slate-900">Checkout pemesanan</h1>
+  <p class="mt-1 text-slate-500">Lengkapi data kontak, zona pemakaian, dan syarat sebelum e-voucher diterbitkan.</p>
+  <%- include('partials/flash') %>
+  <form action="/api/book-service" method="post" enctype="multipart/form-data" data-service="<%= service %>" data-airport-base="<%= airportBase %>" class="js-checkout mt-6 grid gap-4 rounded-3xl bg-white p-6 shadow-sm sm:grid-cols-2">
+    <input type="hidden" name="serviceType" value="<%= service === 'airport' ? 'Airport Transfer' : service === 'tour' ? 'Tour' : 'Rental' %>" />
+    <% if (service === 'rental') { %>
+      <h2 class="sm:col-span-2 text-lg font-semibold">Rental mobil</h2>
+      <select name="rentalType" required class="rounded-xl border border-slate-200 px-4 py-3">
+        <option value="">Tipe sewa</option>
+        <option>Lepas kunci</option>
+        <option selected>Dengan sopir</option>
+        <option>Harian</option>
+        <option>Mingguan</option>
+      </select>
+      <input name="durationDays" type="number" min="1" required value="<%= prefill.durationDays %>" class="rounded-xl border border-slate-200 px-4 py-3" />
+      <select name="vehicleName" required class="rounded-xl border border-slate-200 px-4 py-3">
+        <option value="">Pilih armada</option>
+        <% vehicles.forEach((vehicle) => { %>
+          <option value="<%= vehicle.name %>" data-price="<%= vehicle.pricePerDay %>" <%= prefill.vehicleName === vehicle.name ? 'selected' : '' %>><%= vehicle.name %></option>
+        <% }) %>
+      </select>
+    <% } else if (service === 'airport') { %>
+      <h2 class="sm:col-span-2 text-lg font-semibold">Airport transfer</h2>
+      <select name="serviceKind" required class="rounded-xl border border-slate-200 px-4 py-3">
+        <option value="">Jenis layanan</option>
+        <option>Jemput bandara (airport pick-up)</option>
+        <option>Antar ke bandara (drop-off)</option>
+        <option>Transfer hotel ke bandara</option>
+      </select>
+      <input name="landingAt" type="datetime-local" required class="rounded-xl border border-slate-200 px-4 py-3" />
+      <input name="hotelLocation" required placeholder="Lokasi hotel" class="rounded-xl border border-slate-200 px-4 py-3" />
+    <% } else { %>
+      <h2 class="sm:col-span-2 text-lg font-semibold">Paket wisata</h2>
+      <select name="packageType" required class="rounded-xl border border-slate-200 px-4 py-3">
+        <option value="">Jenis paket</option>
+        <% tourPackages.forEach((tour) => { %>
+          <option data-price="<%= tour.price %>"><%= tour.name %></option>
+        <% }) %>
+      </select>
+      <input name="participantCount" type="number" min="1" required placeholder="Jumlah peserta" class="rounded-xl border border-slate-200 px-4 py-3" />
+    <% } %>
+    <%- include('partials/checkout-fields', { submitLabel: service === 'airport' ? t('checkout.submitAirport') : service === 'tour' ? t('checkout.submitTour') : t('checkout.submitRental'), pickupDate: prefill.pickupDate }) %>
+  </form>
+</main>
+<%- include('partials/site-footer') %>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

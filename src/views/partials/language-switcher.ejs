@@ -1,0 +1,9 @@
+<% const dark = typeof tone !== 'undefined' && tone === 'dark'; %>
+<label class="inline-flex items-center">
+  <span class="sr-only"><%= t('lang.label') %></span>
+  <select aria-label="<%= t('lang.label') %>" onchange="window.location.href='/bahasa/' + this.value" class="max-w-[8.5rem] rounded-full border px-2 py-1.5 text-sm <%= dark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-white text-slate-700' %>">
+    <% languages.forEach(function (item) { %>
+      <option value="<%= item.code %>" <%= item.code === lang ? 'selected' : '' %>><%= item.flag %> <%= item.short %></option>
+    <% }) %>
+  </select>
+</label>

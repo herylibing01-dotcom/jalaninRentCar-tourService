@@ -1,0 +1,7 @@
+<nav class="border-b border-slate-200 bg-white px-4 py-2 text-sm text-slate-600" aria-label="Jejak halaman">
+  <a href="<%= previousSection ? previousSection.href : '/' %>" class="font-semibold text-brand-700 hover:underline">Kembali ke Section Sebelumnya</a>
+  <span class="mx-2 text-slate-300">/</span>
+  <span><%= previousSection ? previousSection.label : 'Beranda' %></span>
+  <span class="mx-2 text-slate-300">/</span>
+  <span class="text-slate-900"><%= currentSection ? currentSection.label : title %></span>
+</nav>

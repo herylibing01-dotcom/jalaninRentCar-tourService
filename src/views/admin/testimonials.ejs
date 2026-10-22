@@ -1,0 +1,48 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'testimonials' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+      <h1 class="text-2xl font-semibold text-slate-900">Kelola Testimoni</h1>
+      <p class="mt-1 text-slate-500">Testimoni yang disimpan di sini langsung tampil di landing page.</p>
+      <%- include('../partials/flash') %>
+
+      <form action="/admin/testimoni" method="post" enctype="multipart/form-data" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+        <% if (editing) { %><input type="hidden" name="id" value="<%= editing.id %>" /><% } %>
+        <input name="nama_tokoh" required value="<%= editing ? editing.nama_tokoh : '' %>" placeholder="Nama tokoh" class="rounded-xl border border-slate-200 px-3 py-2" />
+        <input name="jabatan" value="<%= editing ? editing.jabatan : '' %>" placeholder="Jabatan" class="rounded-xl border border-slate-200 px-3 py-2" />
+        <input name="asal_negara" value="<%= editing ? editing.asal_negara : '' %>" placeholder="Asal negara" class="rounded-xl border border-slate-200 px-3 py-2" />
+        <input name="foto_profil" type="file" accept="image/jpeg,image/png" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
+        <textarea name="teks_testimoni" required rows="4" placeholder="Teks testimoni" class="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2"><%= editing ? editing.teks_testimoni : '' %></textarea>
+        <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white sm:col-span-2"><%= editing ? 'Simpan testimoni' : 'Tambah testimoni' %></button>
+      </form>
+
+      <div class="mt-6 space-y-3">
+        <% if (!items.length) { %>
+          <p class="rounded-2xl bg-white p-6 text-sm text-slate-500">Belum ada testimoni.</p>
+        <% } %>
+        <% items.forEach((item) => { %>
+          <article class="flex flex-wrap items-start justify-between gap-3 rounded-2xl bg-white p-5 shadow-sm">
+            <div class="flex gap-3">
+              <% if (item.foto_profil) { %><img src="<%= item.foto_profil %>" alt="" class="h-12 w-12 rounded-full object-cover" /><% } %>
+              <div>
+                <p class="font-semibold"><%= item.nama_tokoh %></p>
+                <p class="text-sm text-slate-500"><%= item.jabatan %><%= item.asal_negara ? ' · ' + item.asal_negara : '' %></p>
+                <p class="mt-2 max-w-xl text-sm text-slate-700"><%= item.teks_testimoni %></p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <a href="/admin/testimoni?edit=<%= item.id %>" class="rounded-lg border px-3 py-1 text-sm">Ubah</a>
+              <form action="/admin/testimoni/<%= item.id %>/hapus" method="post">
+                <button class="rounded-lg bg-rose-50 px-3 py-1 text-sm text-rose-700">Hapus</button>
+              </form>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

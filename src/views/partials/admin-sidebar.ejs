@@ -1,0 +1,110 @@
+<%
+  const current = typeof page !== "undefined" ? page : "";
+  const groups = {
+    ringkasan: ["dashboard", "testimonials", "traffic"],
+    keuangan: ["payroll", "payments", "employees"],
+    pengaturan: ["fleet", "pricing", "zones"],
+  };
+  const groupOpen = (name) => groups[name].includes(current);
+  const itemClass = (name) =>
+    "block rounded-lg py-2 pl-9 pr-3 text-sm hover:bg-slate-800 hover:text-white " +
+    (current === name ? "bg-slate-800 text-white" : "text-slate-300");
+  const parentClass = (name) =>
+    "flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-800 " +
+    (groupOpen(name) ? "bg-slate-800 text-white" : "");
+%>
+<aside class="flex w-64 shrink-0 flex-col bg-slate-900 text-slate-200">
+  <div class="px-6 py-6">
+    <a href="/" class="brand-logo flex items-center gap-2 text-white">
+      <%- include('logo') %>
+      <span class="text-sm font-semibold">Jalanin</span>
+    </a>
+    <h1 class="mt-3 text-lg font-semibold text-white"><%= t('nav.dashboard') %></h1>
+    <div class="mt-4"><%- include('language-switcher', { tone: 'dark' }) %></div>
+  </div>
+  <nav id="admin-nav" class="flex-1 space-y-1 overflow-y-auto px-3 pb-4">
+    <div data-menu class="<%= groupOpen('ringkasan') ? 'is-open' : '' %>">
+      <button type="button" class="<%= parentClass('ringkasan') %>" data-menu-toggle aria-expanded="<%= groupOpen('ringkasan') ? 'true' : 'false' %>">
+        <span>Ringkasan</span>
+        <svg class="menu-chevron h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="menu-panel">
+        <div class="overflow-hidden">
+          <a href="/admin" class="<%= itemClass('dashboard') %>">Ringkasan</a>
+          <a href="/admin/testimoni" class="<%= itemClass('testimonials') %>">Kelola Testimoni</a>
+          <a href="/admin/statistik" class="<%= itemClass('traffic') %>">Statistik Website</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="/admin/pesanan" class="block rounded-lg px-3 py-2 text-sm hover:bg-slate-800 <%= current === 'orders' ? 'bg-slate-800 text-white' : '' %>">Pesanan Masuk</a>
+
+    <a href="/admin/direct-booking" class="block rounded-lg px-3 py-2 text-sm hover:bg-slate-800 <%= current === 'direct-booking' ? 'bg-slate-800 text-white' : '' %>">Direct Booking</a>
+
+    <div data-menu class="<%= groupOpen('keuangan') ? 'is-open' : '' %>">
+      <button type="button" class="<%= parentClass('keuangan') %>" data-menu-toggle aria-expanded="<%= groupOpen('keuangan') ? 'true' : 'false' %>">
+        <span>Keuangan</span>
+        <svg class="menu-chevron h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="menu-panel">
+        <div class="overflow-hidden">
+          <a href="/admin/gaji" class="<%= itemClass('payroll') %>">Perhitungan Gaji</a>
+          <a href="/admin/pembayaran" class="<%= itemClass('payments') %>">Pembayaran</a>
+          <a href="/admin/karyawan" class="<%= itemClass('employees') %>">Data Karyawan</a>
+        </div>
+      </div>
+    </div>
+
+    <div data-menu class="<%= groupOpen('pengaturan') ? 'is-open' : '' %>">
+      <button type="button" class="<%= parentClass('pengaturan') %>" data-menu-toggle aria-expanded="<%= groupOpen('pengaturan') ? 'true' : 'false' %>">
+        <span>Pengaturan</span>
+        <svg class="menu-chevron h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="menu-panel">
+        <div class="overflow-hidden">
+          <a href="/admin/armada" class="<%= itemClass('fleet') %>">Kelola Armada</a>
+          <a href="/admin/tarif" class="<%= itemClass('pricing') %>">Manajemen Tarif &amp; Harga</a>
+          <a href="/admin/zona" class="<%= itemClass('zones') %>">Zona &amp; Tarif</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="border-t border-slate-800 px-4 py-4">
+    <p class="truncate text-sm text-white"><%= user.name %></p>
+    <p class="text-xs text-slate-400">Admin</p>
+    <form action="/logout" method="post" class="mt-3">
+      <button class="w-full rounded-lg bg-slate-800 px-3 py-2 text-sm hover:bg-slate-700">Keluar</button>
+    </form>
+  </div>
+</aside>
+<style>
+  .menu-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.22s ease;
+  }
+  .is-open > .menu-panel {
+    grid-template-rows: 1fr;
+  }
+  .menu-chevron {
+    transition: transform 0.22s ease;
+  }
+  .is-open > button .menu-chevron {
+    transform: rotate(180deg);
+  }
+</style>
+<script>
+  document.querySelectorAll("[data-menu-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const group = button.closest("[data-menu]");
+      const open = group.classList.toggle("is-open");
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+</script>

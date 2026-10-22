@@ -1,0 +1,253 @@
+<%- include('partials/head') %>
+<div class="bg-slate-50">
+  <%- include('partials/site-header', { page: 'home' }) %>
+
+  <section class="animated-gradient text-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-[1.2fr_0.8fr] md:py-24">
+      <div>
+        <p class="inline-flex rounded-full bg-white/15 px-4 py-2 text-lg font-semibold text-amber-200 ring-1 ring-amber-200/40 md:text-2xl"><%= ratings.global.text %></p>
+        <p class="mt-6 text-sm uppercase tracking-[0.28em] text-amber-200">Jalanin Rent Car &amp; Tour Service</p>
+        <h1 class="mt-4 text-4xl font-semibold leading-tight md:text-6xl"><%= brand %></h1>
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-white/90"><%= t('hero.tagline') %></p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/checkout?service=rental" class="rounded-full bg-orange-500 px-5 py-3 font-semibold text-white hover:bg-orange-600"><%= t('hero.searchFleet') %></a>
+          <a href="/checkout?service=airport" class="rounded-full border border-white/40 px-5 py-3 font-semibold text-white hover:bg-white/10"><%= t('hero.airport') %></a>
+        </div>
+      </div>
+      <div class="rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+        <div class="brand-logo flex items-center gap-3">
+          <%- include('partials/logo') %>
+          <div>
+            <p class="text-lg font-semibold">Siap jalan hari ini</p>
+            <p class="text-sm text-white/80">Rental, airport transfer, dan tour dalam satu pemesanan.</p>
+          </div>
+        </div>
+        <ul class="mt-6 space-y-3 text-sm text-white/90">
+          <li>Armada harian dengan sopir atau lepas kunci</li>
+          <li>Jemput bandara sesuai nomor penerbangan</li>
+          <li>E-voucher langsung setelah checkout</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="fitur" class="mx-auto max-w-6xl px-4 py-16">
+    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-700"><%= t('home.featuresEyebrow') %></p>
+    <h2 class="mt-2 text-3xl font-semibold text-slate-900"><%= t('home.featuresTitle') %></h2>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-brand-700">01</p>
+        <h3 class="mt-3 text-lg font-semibold">Armada terawat</h3>
+        <p class="mt-2 text-sm text-slate-600">MPV, SUV, dan sedan dengan tarif harian yang jelas sebelum Anda membayar.</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-brand-700">02</p>
+        <h3 class="mt-3 text-lg font-semibold">Sopir lokal</h3>
+        <p class="mt-2 text-sm text-slate-600">Tim internal yang mengenal jalur Denpasar, Ubud, dan kawasan luar kota.</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-brand-700">03</p>
+        <h3 class="mt-3 text-lg font-semibold">Airport transfer</h3>
+        <p class="mt-2 text-sm text-slate-600">Penjemputan mengikuti nomor penerbangan, lokasi hotel, dan jam kedatangan.</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-brand-700">04</p>
+        <h3 class="mt-3 text-lg font-semibold">Tour kustom</h3>
+        <p class="mt-2 text-sm text-slate-600">City tour sampai itinerary beberapa hari, disusun sesuai jumlah peserta.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="armada" class="bg-white py-16">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-700"><%= t('home.fleetEyebrow') %></p>
+      <h2 class="mt-2 text-3xl font-semibold text-slate-900"><%= t('home.fleetTitle') %></h2>
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
+        <% vehicles.slice(0, 3).forEach((vehicle) => { %>
+          <article class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
+            <img src="<%= vehicle.image %>" alt="<%= vehicle.name %>" class="h-44 w-full object-cover" />
+            <div class="p-5">
+              <p class="text-xs uppercase tracking-wide text-slate-400"><%= vehicle.type %> · <%= vehicle.seats %> kursi</p>
+              <h3 class="mt-1 text-xl font-semibold"><%= vehicle.name %></h3>
+              <p class="mt-2 text-brand-700"><%= rupiah(vehicle.pricePerDay) %> <span class="text-sm text-slate-500">/ hari</span></p>
+              <a href="/checkout?service=rental&vehicle=<%= encodeURIComponent(vehicle.name) %>" class="mt-4 inline-block text-sm font-semibold text-orange-600">Sewa unit ini</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+      <a href="/katalog" class="mt-6 inline-block font-semibold text-brand-700">Lihat seluruh armada</a>
+    </div>
+  </section>
+
+  <section id="tour" class="mx-auto max-w-6xl px-4 py-16">
+    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-700"><%= t('home.tourEyebrow') %></p>
+    <h2 class="mt-2 text-3xl font-semibold text-slate-900"><%= t('home.tourTitle') %></h2>
+    <div class="mt-8 grid gap-4 md:grid-cols-2">
+      <% tourPackages.forEach((tour) => { %>
+        <article class="flex flex-col justify-between rounded-3xl bg-white p-6 shadow-sm">
+          <div>
+            <h3 class="text-xl font-semibold"><%= tour.name %></h3>
+            <p class="mt-2 text-sm text-slate-600"><%= tour.text %></p>
+          </div>
+          <div class="mt-5 flex items-center justify-between">
+            <p class="font-semibold text-brand-800"><%= rupiah(tour.price) %></p>
+            <a href="#pesan" class="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white"><%= t('home.bookPackage') %></a>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section id="cara" class="bg-brand-900 py-16 text-white">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-200"><%= t('home.stepsEyebrow') %></p>
+      <h2 class="mt-2 text-3xl font-semibold"><%= t('home.stepsTitle') %></h2>
+      <ol class="mt-8 grid gap-4 md:grid-cols-4">
+        <li class="rounded-2xl bg-white/10 p-5"><span class="text-amber-200">1</span><p class="mt-2 font-semibold">Pilih layanan</p><p class="mt-1 text-sm text-white/75">Rental, airport transfer, atau paket wisata.</p></li>
+        <li class="rounded-2xl bg-white/10 p-5"><span class="text-amber-200">2</span><p class="mt-2 font-semibold">Isi jadwal</p><p class="mt-1 text-sm text-white/75">Tanggal, jam, lokasi jemput, dan lokasi antar.</p></li>
+        <li class="rounded-2xl bg-white/10 p-5"><span class="text-amber-200">3</span><p class="mt-2 font-semibold">Bayar</p><p class="mt-1 text-sm text-white/75">QRIS atau transfer ke rekening yang dipilih admin.</p></li>
+        <li class="rounded-2xl bg-white/10 p-5"><span class="text-amber-200">4</span><p class="mt-2 font-semibold">Terima e-tiket</p><p class="mt-1 text-sm text-white/75">Jadwal masih bisa diubah dalam 1 jam.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="pesan" class="mx-auto max-w-4xl px-4 py-16">
+    <%- include('partials/flash') %>
+    <div class="overflow-hidden rounded-3xl bg-white shadow-xl">
+      <div class="grid grid-cols-3 bg-slate-100 p-1.5" role="tablist">
+        <button type="button" data-tab="rental" class="tab-btn rounded-2xl bg-white px-3 py-3 text-sm font-semibold text-brand-800 shadow-sm">Rental Mobil</button>
+        <button type="button" data-tab="airport" class="tab-btn rounded-2xl px-3 py-3 text-sm font-medium text-slate-500">Airport Transfer</button>
+        <button type="button" data-tab="tour" class="tab-btn rounded-2xl px-3 py-3 text-sm font-medium text-slate-500">Paket Wisata</button>
+      </div>
+      <div class="p-6 md:p-8">
+        <form data-panel="rental" data-service="rental" data-airport-base="<%= airportBase %>" action="/api/book-service" method="post" enctype="multipart/form-data" class="js-checkout tab-panel grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="serviceType" value="Rental" />
+          <h2 class="sm:col-span-2 text-xl font-semibold text-slate-900"><%= t('checkout.rentalTitle') %></h2>
+          <select name="rentalType" required class="rounded-xl border border-slate-200 px-4 py-3">
+            <option value="">Tipe sewa</option>
+            <option>Lepas kunci</option>
+            <option>Dengan sopir</option>
+            <option>Harian</option>
+            <option>Mingguan</option>
+          </select>
+          <input name="durationDays" type="number" min="1" value="1" required placeholder="Durasi (hari)" class="rounded-xl border border-slate-200 px-4 py-3" />
+          <select name="vehicleName" required class="rounded-xl border border-slate-200 px-4 py-3 sm:col-span-2">
+            <option value="">Pilih armada</option>
+            <% vehicles.forEach((vehicle) => { %>
+              <option value="<%= vehicle.name %>" data-price="<%= vehicle.pricePerDay %>"><%= vehicle.name %></option>
+            <% }) %>
+          </select>
+          <%- include('partials/checkout-fields', { submitLabel: t('checkout.submitRental'), pickupDate: today }) %>
+        </form>
+
+        <form data-panel="airport" data-service="airport" data-airport-base="<%= airportBase %>" action="/api/book-service" method="post" enctype="multipart/form-data" class="js-checkout tab-panel hidden grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="serviceType" value="Airport Transfer" />
+          <h2 class="sm:col-span-2 text-xl font-semibold text-slate-900"><%= t('checkout.airportTitle') %></h2>
+          <select name="serviceKind" required class="rounded-xl border border-slate-200 px-4 py-3">
+            <option value="">Jenis layanan</option>
+            <option>Jemput bandara (airport pick-up)</option>
+            <option>Antar ke bandara (drop-off)</option>
+            <option>Transfer hotel ↔ bandara</option>
+          </select>
+          <input name="landingAt" type="datetime-local" required class="rounded-xl border border-slate-200 px-4 py-3" />
+          <input name="hotelLocation" required placeholder="Lokasi hotel / tujuan" class="rounded-xl border border-slate-200 px-4 py-3 sm:col-span-2" />
+          <%- include('partials/checkout-fields', { submitLabel: t('checkout.submitAirport'), pickupDate: today }) %>
+        </form>
+
+        <form data-panel="tour" data-service="tour" data-airport-base="<%= airportBase %>" action="/api/book-service" method="post" enctype="multipart/form-data" class="js-checkout tab-panel hidden grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="serviceType" value="Tour" />
+          <h2 class="sm:col-span-2 text-xl font-semibold text-slate-900"><%= t('checkout.tourTitle') %></h2>
+          <select name="packageType" required class="rounded-xl border border-slate-200 px-4 py-3">
+            <option value="">Jenis paket wisata</option>
+            <% tourPackages.forEach((tour) => { %>
+              <option data-price="<%= tour.price %>"><%= tour.name %></option>
+            <% }) %>
+          </select>
+          <input name="participantCount" type="number" min="1" required placeholder="Jumlah peserta" class="rounded-xl border border-slate-200 px-4 py-3" />
+          <textarea name="notes" rows="3" placeholder="Catatan itinerary (opsional)" class="rounded-xl border border-slate-200 px-4 py-3 sm:col-span-2"></textarea>
+          <%- include('partials/checkout-fields', { submitLabel: t('checkout.submitTour'), pickupDate: today }) %>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimoni" class="bg-white py-16">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-700">Testimoni</p>
+      <h2 class="mt-2 text-3xl font-semibold text-slate-900">Cerita tamu yang kami antar</h2>
+      <% if (!testimonials.length) { %>
+        <p class="mt-6 text-sm text-slate-500">Testimoni pilihan akan tampil di sini setelah admin menambahkannya.</p>
+      <% } else { %>
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          <% testimonials.forEach((item) => { %>
+            <article class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+              <div class="flex items-center gap-3">
+                <% if (item.foto_profil) { %>
+                  <img src="<%= item.foto_profil %>" alt="<%= item.nama_tokoh %>" class="h-12 w-12 rounded-full object-cover" />
+                <% } else { %>
+                  <span class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-800"><%= item.nama_tokoh.slice(0, 1) %></span>
+                <% } %>
+                <div>
+                  <p class="font-semibold text-slate-900"><%= item.nama_tokoh %></p>
+                  <p class="text-sm text-slate-500"><%= item.jabatan %><%= item.asal_negara ? ' · ' + item.asal_negara : '' %></p>
+                </div>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-slate-700"><%= item.teks_testimoni %></p>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section id="ulasan" class="bg-slate-950 py-16 text-white">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-200">Ulasan pelanggan</p>
+      <h2 class="mt-2 text-3xl font-semibold">Perjalanan yang sudah selesai</h2>
+    </div>
+    <% if (!reviewCards.length) { %>
+      <p class="mx-auto mt-8 max-w-6xl px-4 text-sm text-white/70">Ulasan customer akan bergerak di sini setelah ada perjalanan selesai.</p>
+    <% } else { %>
+      <div class="review-marquee mt-8">
+        <div class="review-track gap-4 px-4">
+          <% [0, 1].forEach(() => { %>
+            <% reviewCards.forEach((card) => { %>
+              <article class="w-80 shrink-0 rounded-3xl bg-white p-5 text-slate-800 shadow-sm">
+                <p class="text-amber-500"><%= '★'.repeat(card.rating) %><span class="text-slate-300"><%= '☆'.repeat(5 - card.rating) %></span></p>
+                <p class="mt-3 text-sm leading-relaxed"><%= card.feedback %></p>
+                <p class="mt-4 font-semibold"><%= card.nama_customer %></p>
+                <p class="text-xs text-slate-500">Tanggal perjalanan <%= card.travelDate || '-' %></p>
+              </article>
+            <% }) %>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+  </section>
+
+  <%- include('partials/site-footer') %>
+</div>
+<script>
+  const buttons = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".tab-panel");
+  function activate(name) {
+    buttons.forEach((button) => {
+      const on = button.dataset.tab === name;
+      button.classList.toggle("bg-white", on);
+      button.classList.toggle("shadow-sm", on);
+      button.classList.toggle("text-brand-800", on);
+      button.classList.toggle("font-semibold", on);
+      button.classList.toggle("text-slate-500", !on);
+      button.classList.toggle("font-medium", !on);
+    });
+    panels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.panel !== name);
+    });
+  }
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => activate(button.dataset.tab));
+  });
+</script>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

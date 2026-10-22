@@ -1,0 +1,46 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'payments' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+      <h1 class="text-2xl font-semibold text-slate-900">Metode Pembayaran</h1>
+      <p class="mt-1 text-slate-500">QRIS, e-wallet, transfer bank, dan kartu kredit yang aktif langsung muncul di checkout.</p>
+      <%- include('../partials/flash') %>
+
+      <form action="/admin/pembayaran" method="post" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+        <% if (editing) { %><input type="hidden" name="id" value="<%= editing.id %>" /><% } %>
+        <select name="type" class="rounded-xl border border-slate-200 px-3 py-2">
+          <% [['qris','QRIS'],['ewallet','E-Wallet'],['transfer_bank','Transfer Bank'],['kartu_kredit','Kartu Kredit']].forEach((item) => { %>
+            <option value="<%= item[0] %>" <%= editing && editing.type === item[0] ? 'selected' : '' %>><%= item[1] %></option>
+          <% }) %>
+        </select>
+        <input name="name" required value="<%= editing ? editing.name : '' %>" placeholder="Nama, contoh OVO atau QRIS" class="rounded-xl border border-slate-200 px-3 py-2" />
+        <input name="barcodeUrl" value="<%= editing ? editing.barcodeUrl : '' %>" placeholder="Tautan gambar QRIS" class="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2" />
+        <input name="note" value="<%= editing ? editing.note : '' %>" placeholder="Catatan untuk customer" class="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2" />
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="active" <%= !editing || editing.active ? 'checked' : '' %> /> Aktif di checkout</label>
+        <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white sm:col-span-2 sm:w-fit"><%= editing ? 'Simpan perubahan' : 'Tambah metode' %></button>
+      </form>
+
+      <div class="mt-6 space-y-3">
+        <% methods.forEach((method) => { %>
+          <article class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-5 shadow-sm">
+            <div>
+              <p class="font-semibold"><%= method.name %></p>
+              <p class="text-sm text-slate-500"><%= method.type %> · <%= method.active ? 'Aktif' : 'Nonaktif' %></p>
+              <% if (method.barcodeUrl) { %><p class="text-xs text-slate-400"><%= method.barcodeUrl %></p><% } %>
+            </div>
+            <div class="flex gap-2">
+              <a href="/admin/pembayaran?id=<%= method.id %>" class="rounded-lg border border-slate-200 px-3 py-2 text-sm">Ubah</a>
+              <form action="/admin/pembayaran/<%= method.id %>/status" method="post">
+                <button class="rounded-lg bg-slate-100 px-3 py-2 text-sm"><%= method.active ? 'Nonaktifkan' : 'Aktifkan' %></button>
+              </form>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

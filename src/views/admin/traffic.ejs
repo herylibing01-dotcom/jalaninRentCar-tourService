@@ -1,0 +1,95 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'traffic' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+      <h1 class="text-2xl font-semibold text-slate-900">Statistik Website</h1>
+      <p class="mt-1 text-slate-500">Kunjungan beranda dan halaman publik, termasuk pengunjung yang belum memesan.</p>
+      <%- include('../partials/flash') %>
+
+      <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-2xl bg-white p-5 shadow-sm">
+          <p class="text-sm text-slate-500">Pengunjung unik hari ini</p>
+          <p class="mt-2 text-3xl font-semibold text-brand-700"><%= traffic.uniqueToday %></p>
+        </article>
+        <article class="rounded-2xl bg-white p-5 shadow-sm">
+          <p class="text-sm text-slate-500">Pengunjung unik 7 hari</p>
+          <p class="mt-2 text-3xl font-semibold"><%= traffic.uniqueWeek %></p>
+        </article>
+        <article class="rounded-2xl bg-white p-5 shadow-sm">
+          <p class="text-sm text-slate-500">Total kunjungan tercatat</p>
+          <p class="mt-2 text-3xl font-semibold"><%= traffic.totalVisits %></p>
+          <p class="mt-1 text-xs text-slate-400"><%= traffic.uniqueVisitors %> sesi unik</p>
+        </article>
+        <article class="rounded-2xl bg-white p-5 shadow-sm">
+          <p class="text-sm text-slate-500">Rasio konversi</p>
+          <p class="mt-2 text-3xl font-semibold text-emerald-700"><%= traffic.conversion %>%</p>
+          <p class="mt-1 text-xs text-slate-400"><%= traffic.successCount %> transaksi berhasil / <%= traffic.uniqueVisitors %> pengunjung</p>
+        </article>
+      </section>
+
+      <section class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="font-semibold text-slate-900">Halaman yang paling sering dilihat</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-500">
+              <tr>
+                <th class="px-5 py-3 font-medium">Halaman</th>
+                <th class="px-5 py-3 font-medium">Tayangan</th>
+                <th class="px-5 py-3 font-medium">Porsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (!traffic.topPages.length) { %>
+                <tr><td colspan="3" class="px-5 py-6 text-slate-500">Belum ada kunjungan tercatat.</td></tr>
+              <% } %>
+              <% traffic.topPages.forEach((row) => { %>
+                <tr class="border-t border-slate-100">
+                  <td class="px-5 py-3 font-medium text-slate-900"><%= row.page %></td>
+                  <td class="px-5 py-3"><%= row.views %></td>
+                  <td class="px-5 py-3 text-slate-500"><%= traffic.totalVisits ? Math.round((row.views / traffic.totalVisits) * 1000) / 10 : 0 %>%</td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div class="border-b border-slate-100 px-5 py-4">
+          <h2 class="font-semibold text-slate-900">Kunjungan terbaru</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-500">
+              <tr>
+                <th class="px-5 py-3 font-medium">Waktu</th>
+                <th class="px-5 py-3 font-medium">Halaman</th>
+                <th class="px-5 py-3 font-medium">Sesi</th>
+                <th class="px-5 py-3 font-medium">IP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (!traffic.recent.length) { %>
+                <tr><td colspan="4" class="px-5 py-6 text-slate-500">Belum ada data.</td></tr>
+              <% } %>
+              <% traffic.recent.forEach((row) => { %>
+                <tr class="border-t border-slate-100">
+                  <td class="px-5 py-3 whitespace-nowrap"><%= new Date(row.timestamp).toLocaleString('id-ID') %></td>
+                  <td class="px-5 py-3"><%= row.page_visited %></td>
+                  <td class="px-5 py-3 font-mono text-xs text-slate-500"><%= String(row.session_id || '').slice(0, 10) %></td>
+                  <td class="px-5 py-3 text-slate-500"><%= row.ip_address || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

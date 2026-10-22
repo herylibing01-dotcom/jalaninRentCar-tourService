@@ -1,0 +1,88 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'fleet' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Kelola Armada</h1>
+    <p class="mt-1 text-slate-500">Tambah, ubah, atau hapus mobil yang tampil di katalog pelanggan.</p>
+    <%- include('../partials/flash') %>
+
+    <form action="/admin/armada" method="post" enctype="multipart/form-data" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+      <% if (editing) { %>
+        <input type="hidden" name="id" value="<%= editing.id %>" />
+      <% } %>
+      <input name="name" value="<%= editing ? editing.name : '' %>" required placeholder="Nama mobil" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="brand" value="<%= editing ? editing.brand : '' %>" required placeholder="Merek" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <select name="type" class="rounded-xl border border-slate-200 px-3 py-2">
+        <% ['MPV','SUV','Sedan','Hatchback'].forEach((type) => { %>
+          <option value="<%= type %>" <%= editing && editing.type === type ? 'selected' : '' %>><%= type %></option>
+        <% }) %>
+      </select>
+      <select name="transmission" class="rounded-xl border border-slate-200 px-3 py-2">
+        <option <%= editing && editing.transmission === 'Manual' ? 'selected' : '' %>>Manual</option>
+        <option <%= editing && editing.transmission === 'Automatic' ? 'selected' : '' %>>Automatic</option>
+      </select>
+      <input name="seats" type="number" min="2" value="<%= editing ? editing.seats : 5 %>" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="city" value="<%= editing ? editing.city : 'Jakarta' %>" placeholder="Kota" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="pricePerDay" type="number" min="0" value="<%= editing ? editing.pricePerDay : '' %>" placeholder="Harga per hari" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <select name="status" class="rounded-xl border border-slate-200 px-3 py-2">
+        <option value="available" <%= editing && editing.status === 'available' ? 'selected' : '' %>>Tersedia</option>
+        <option value="rented" <%= editing && editing.status === 'rented' ? 'selected' : '' %>>Disewa</option>
+      </select>
+      <div class="sm:col-span-2">
+        <% if (editing && editing.image) { %>
+          <img src="<%= editing.image %>" alt="<%= editing.name %>" class="mb-3 h-28 w-44 rounded-xl object-cover" />
+        <% } %>
+        <label class="mb-1 block text-sm font-medium text-slate-700">Foto kendaraan (JPG/PNG, maks. 2MB)</label>
+        <input name="vehicleImage" type="file" accept="image/jpeg,image/png" class="w-full text-sm" />
+        <input name="image" value="<%= editing ? editing.image : '' %>" placeholder="atau tempel URL foto" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2" />
+      </div>
+      <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 sm:col-span-2">
+        <%= editing ? 'Simpan perubahan' : 'Tambah mobil' %>
+      </button>
+    </form>
+
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Mobil</th>
+            <th class="px-4 py-3">Tipe</th>
+            <th class="px-4 py-3">Kota</th>
+            <th class="px-4 py-3">Harga/hari</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% vehicles.forEach((vehicle) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3 font-medium">
+                <span class="flex items-center gap-3">
+                  <img src="<%= vehicle.image %>" alt="" class="h-10 w-14 rounded object-cover" />
+                  <%= vehicle.name %>
+                </span>
+              </td>
+              <td class="px-4 py-3"><%= vehicle.type %></td>
+              <td class="px-4 py-3"><%= vehicle.city %></td>
+              <td class="px-4 py-3"><%= rupiah(vehicle.pricePerDay) %></td>
+              <td class="px-4 py-3"><%= vehicle.status === 'available' ? 'Tersedia' : 'Disewa' %></td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end gap-2">
+                  <a href="/admin/armada?edit=<%= vehicle.id %>" class="rounded-lg border px-3 py-1">Ubah</a>
+                  <form action="/admin/armada/<%= vehicle.id %>/hapus" method="post">
+                    <button class="rounded-lg bg-rose-50 px-3 py-1 text-rose-700">Hapus</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

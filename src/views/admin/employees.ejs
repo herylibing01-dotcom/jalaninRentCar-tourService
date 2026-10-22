@@ -1,0 +1,63 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'employees' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Data Karyawan</h1>
+    <p class="mt-1 text-slate-500">Data ini dipakai juga untuk perhitungan gaji.</p>
+    <%- include('../partials/flash') %>
+
+    <form action="/admin/karyawan" method="post" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+      <% if (editing) { %>
+        <input type="hidden" name="id" value="<%= editing.id %>" />
+      <% } %>
+      <input name="name" value="<%= editing ? editing.name : '' %>" required placeholder="Nama" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="position" value="<%= editing ? editing.position : '' %>" required placeholder="Jabatan" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="phone" value="<%= editing ? editing.phone : '' %>" placeholder="No. HP" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <select name="jobRole" class="rounded-xl border border-slate-200 px-3 py-2">
+        <option value="staff" <%= editing && editing.jobRole === 'staff' ? 'selected' : '' %>>Staff</option>
+        <option value="driver" <%= editing && editing.jobRole === 'driver' ? 'selected' : '' %>>Sopir</option>
+      </select>
+      <input name="baseSalary" type="number" min="0" value="<%= editing ? editing.baseSalary : '' %>" required placeholder="Gaji pokok" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 sm:col-span-2">
+        <%= editing ? 'Simpan perubahan' : 'Tambah karyawan' %>
+      </button>
+    </form>
+
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Nama</th>
+            <th class="px-4 py-3">Jabatan</th>
+            <th class="px-4 py-3">Telepon</th>
+            <th class="px-4 py-3">Gaji pokok</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% employees.forEach((employee) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3 font-medium"><%= employee.name %></td>
+              <td class="px-4 py-3"><%= employee.position %></td>
+              <td class="px-4 py-3"><%= employee.phone %></td>
+              <td class="px-4 py-3"><%= rupiah(employee.baseSalary) %></td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end gap-2">
+                  <a href="/admin/karyawan?edit=<%= employee.id %>" class="rounded-lg border px-3 py-1">Ubah</a>
+                  <form action="/admin/karyawan/<%= employee.id %>/hapus" method="post">
+                    <button class="rounded-lg bg-rose-50 px-3 py-1 text-rose-700">Hapus</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

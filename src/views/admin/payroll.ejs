@@ -1,0 +1,57 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'payroll' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Perhitungan Gaji</h1>
+    <p class="mt-1 text-slate-500">Gaji bersih = gaji pokok + bonus − potongan. Hasilnya tersimpan di riwayat.</p>
+    <%- include('../partials/flash') %>
+
+    <form action="/admin/gaji" method="post" class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+      <select name="employeeId" required class="rounded-xl border border-slate-200 px-3 py-2">
+        <option value="">Pilih karyawan</option>
+        <% employees.forEach((employee) => { %>
+          <option value="<%= employee.id %>"><%= employee.name %> — <%= rupiah(employee.baseSalary) %></option>
+        <% }) %>
+      </select>
+      <input name="period" type="month" required class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="bonus" type="number" min="0" value="0" placeholder="Bonus" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <input name="deduction" type="number" min="0" value="0" placeholder="Potongan" class="rounded-xl border border-slate-200 px-3 py-2" />
+      <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 sm:col-span-2">Hitung & simpan gaji</button>
+    </form>
+
+    <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Periode</th>
+            <th class="px-4 py-3">Karyawan</th>
+            <th class="px-4 py-3">Pokok</th>
+            <th class="px-4 py-3">Bonus</th>
+            <th class="px-4 py-3">Potongan</th>
+            <th class="px-4 py-3">Gaji bersih</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!payrolls.length) { %>
+            <tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">Belum ada riwayat gaji.</td></tr>
+          <% } %>
+          <% payrolls.forEach((item) => { %>
+            <tr class="border-t border-slate-100">
+              <td class="px-4 py-3"><%= item.period %></td>
+              <td class="px-4 py-3 font-medium"><%= item.employeeName %></td>
+              <td class="px-4 py-3"><%= rupiah(item.baseSalary) %></td>
+              <td class="px-4 py-3"><%= rupiah(item.bonus) %></td>
+              <td class="px-4 py-3"><%= rupiah(item.deduction) %></td>
+              <td class="px-4 py-3 font-semibold text-brand-700"><%= rupiah(item.netSalary) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

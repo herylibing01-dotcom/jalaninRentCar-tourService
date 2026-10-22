@@ -1,0 +1,81 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'dashboard' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900"><%= t('dash.title') %></h1>
+    <p class="mt-1 text-slate-500"><%= t('dash.subtitle') %></p>
+    <%- include('../partials/flash') %>
+
+    <section class="mt-8 grid gap-4 sm:grid-cols-2">
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500"><%= t('dash.newOrders') %></p>
+        <p class="mt-2 text-3xl font-semibold text-amber-600"><%= stats.newOrderCount %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500"><%= t('dash.totalOrders') %></p>
+        <p class="mt-2 text-3xl font-semibold"><%= stats.orderCount %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500"><%= t('dash.fleet') %></p>
+        <p class="mt-2 text-3xl font-semibold"><%= stats.vehicleCount %></p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500"><%= t('dash.staff') %></p>
+        <p class="mt-2 text-3xl font-semibold"><%= stats.employeeCount %></p>
+      </article>
+    </section>
+
+    <section class="mt-8 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold"><%= t('dash.recent') %></h2>
+          <a href="/admin/pesanan" class="text-sm text-brand-700"><%= t('dash.seeAll') %></a>
+        </div>
+        <ul class="mt-4 divide-y divide-slate-100">
+          <% if (!orders.length) { %>
+            <li class="py-3 text-sm text-slate-500"><%= t('dash.empty') %></li>
+          <% } %>
+          <% orders.forEach((order) => { %>
+            <li class="flex items-center justify-between gap-3 py-3 text-sm">
+              <span><%= order.customerName %> · <%= serviceLabel(order.serviceType) %></span>
+              <span class="<%= order.status === 'baru' ? 'text-amber-600' : 'text-emerald-600' %>"><%= orderStatusLabel(order.status) %></span>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold"><%= t('nav.fleet') %></h2>
+          <a href="/admin/armada" class="text-sm text-brand-700"><%= t('dash.manage') %></a>
+        </div>
+        <ul class="mt-4 divide-y divide-slate-100">
+          <% vehicles.slice(0, 5).forEach((vehicle) => { %>
+            <li class="flex items-center justify-between py-3 text-sm">
+              <span><%= vehicle.name %></span>
+              <span class="<%= vehicle.status === 'available' ? 'text-emerald-600' : 'text-amber-600' %>"><%= vehicle.status === 'available' ? 'Tersedia' : 'Disewa' %></span>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold"><%= t('dash.staff') %></h2>
+          <a href="/admin/karyawan" class="text-sm text-brand-700"><%= t('dash.manage') %></a>
+        </div>
+        <ul class="mt-4 divide-y divide-slate-100">
+          <% employees.forEach((employee) => { %>
+            <li class="flex items-center justify-between py-3 text-sm">
+              <span><%= employee.name %></span>
+              <span class="text-slate-500"><%= employee.position %></span>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

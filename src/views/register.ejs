@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+<div class="flex justify-end px-4 py-3"><%- include('partials/language-switcher') %></div>
+<%- include('partials/breadcrumb') %>
+<div class="mx-auto flex min-h-screen max-w-md items-center px-6">
+  <div class="w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+    <p class="text-sm font-semibold text-brand-600"><%= brand %></p>
+    <h1 class="mt-2 text-2xl font-semibold">Daftar sebagai pelanggan</h1>
+    <p class="mt-2 text-sm text-slate-500">Daftar dengan email dan WhatsApp Anda sebelum mengisi voucher checkout.</p>
+    <%- include('partials/flash') %>
+    <form action="/daftar" method="post" class="mt-6 space-y-4">
+      <div>
+        <label class="mb-1 block text-sm font-medium">Nama</label>
+        <input name="name" required class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none ring-brand-500 focus:ring-2" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium">Email</label>
+        <input name="email" type="email" required class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none ring-brand-500 focus:ring-2" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium">WhatsApp</label>
+        <input name="phone" required inputmode="tel" placeholder="<%= t('checkout.whatsappHint') %>" class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none ring-brand-500 focus:ring-2" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium">Kata sandi</label>
+        <input name="password" type="password" minlength="6" required class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none ring-brand-500 focus:ring-2" />
+      </div>
+      <button class="w-full rounded-xl bg-brand-600 py-3 font-semibold text-white hover:bg-brand-700">Buat akun</button>
+    </form>
+    <p class="mt-5 text-sm text-slate-500">Sudah punya akun? <a href="/login" class="font-semibold text-brand-700">Masuk</a></p>
+  </div>
+</div>
+</body>
+</html>

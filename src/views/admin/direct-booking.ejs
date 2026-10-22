@@ -1,0 +1,187 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'direct-booking' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Direct Booking</h1>
+    <p class="mt-1 text-slate-500">Input pesanan manual untuk walk-in customer atau booking via telepon. Data akan tersinkronisasi dengan sistem armada, pesanan, dan keuangan.</p>
+    <%- include('../partials/flash') %>
+
+    <form action="/admin/direct-booking" method="post" class="mt-6 max-w-4xl space-y-6">
+      <!-- Detail Pelanggan -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Detail Pelanggan</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap *</label>
+            <input type="text" name="customerName" required 
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                   placeholder="Masukkan nama lengkap pelanggan">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp *</label>
+            <input type="tel" name="customerPhone" required inputmode="tel"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                   placeholder="Contoh: 08123456789">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Email (Opsional)</label>
+            <input type="email" name="customerEmail"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                   placeholder="nama@email.com">
+          </div>
+        </div>
+      </section>
+
+      <!-- Detail Sewa -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Detail Sewa</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Layanan *</label>
+            <select name="rentalType" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <option value="">Pilih jenis layanan</option>
+              <option value="Lepas kunci">Lepas Kunci</option>
+              <option value="Dengan sopir">Dengan Sopir</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Durasi (Hari) *</label>
+            <input type="number" name="durationDays" min="1" required value="1"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          </div>
+        </div>
+      </section>
+
+      <!-- Detail Unit & Waktu -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Detail Unit & Waktu</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Armada/Mobil *</label>
+            <select name="vehicleName" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <option value="">Pilih armada</option>
+              <% vehicles.forEach((vehicle) => { %>
+                <% if (vehicle.status === 'available') { %>
+                  <option value="<%= vehicle.name %>" data-price="<%= vehicle.pricePerDay %>">
+                    <%= vehicle.name %> - <%= vehicle.type %> - <%= rupiah(vehicle.pricePerDay) %>/hari
+                  </option>
+                <% } %>
+              <% }) %>
+            </select>
+            <p class="mt-1 text-xs text-slate-500">Hanya menampilkan armada yang tersedia</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Mulai *</label>
+            <input type="date" name="pickupDate" required
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Jam Mulai *</label>
+            <input type="time" name="pickupTime" required value="08:00"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Selesai *</label>
+            <input type="date" name="dropoffDate" required
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Jam Selesai *</label>
+            <input type="time" name="dropoffTime" required value="08:00"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          </div>
+        </div>
+      </section>
+
+      <!-- Lokasi -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Lokasi</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Lokasi Penjemputan *</label>
+            <input type="text" name="pickupLocation" required
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                   placeholder="Contoh: Hotel di Seminyak">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Lokasi Pengantaran *</label>
+            <input type="text" name="dropoffLocation" required
+                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                   placeholder="Contoh: Hotel di Seminyak">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Zona Wilayah *</label>
+            <select name="zone" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <option value="">Pilih zona</option>
+              <option value="zona_1">Zona 1 (Dekat)</option>
+              <option value="zona_2">Zona 2 (Ubud/Canggu)</option>
+              <option value="zona_3">Zona 3 (Kintamani/Singaraja)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Penugasan Lapangan -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Penugasan Lapangan</h2>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Driver/Staf Lapangan *</label>
+          <select name="employeeId" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option value="">Pilih driver/staf</option>
+            <% employees.forEach((employee) => { %>
+              <option value="<%= employee.id %>"><%= employee.name %> - <%= employee.position %></option>
+            <% }) %>
+          </select>
+          <p class="mt-1 text-xs text-slate-500">Driver untuk 'Dengan Sopir', Staf untuk 'Lepas Kunci'</p>
+        </div>
+      </section>
+
+      <!-- Pembayaran -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Pembayaran</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Metode Pembayaran *</label>
+            <select name="paymentMethod" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <option value="">Pilih metode pembayaran</option>
+              <option value="Cash">Cash</option>
+              <option value="Transfer Bank Langsung">Transfer Bank Langsung</option>
+              <option value="Selesai di Tempat">Selesai di Tempat</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Status Pembayaran *</label>
+            <select name="paymentStatus" required class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <option value="">Pilih status pembayaran</option>
+              <option value="tunggu_pembayaran">Tunggu Pembayaran</option>
+              <option value="terkonfirmasi">Terkonfirmasi Lunas</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Catatan Khusus -->
+      <section class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Catatan Khusus</h2>
+        <textarea name="specialRequest" rows="3"
+                  class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                  placeholder="Contoh: kursi bayi, jemput di villa, itinerary khusus"></textarea>
+      </section>
+
+      <!-- Submit -->
+      <div class="flex gap-4">
+        <button type="submit" class="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">
+          Buat Pesanan
+        </button>
+        <a href="/admin/pesanan" class="rounded-xl border border-slate-200 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+          Batal
+        </a>
+      </div>
+    </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

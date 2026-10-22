@@ -1,0 +1,220 @@
+<%- include('../partials/head') %>
+<div class="flex min-h-screen">
+  <%- include('../partials/admin-sidebar', { page: 'orders' }) %>
+  <main class="min-w-0 flex-1 overflow-x-auto">
+    <%- include('../partials/breadcrumb') %>
+    <div class="p-8">
+    <h1 class="text-2xl font-semibold text-slate-900">Pesanan masuk</h1>
+    <p class="mt-1 text-slate-500">Pesanan dari formulir beranda dan katalog tercatat di sini. Tugaskan sopir atau karyawan internal.</p>
+    <%- include('../partials/flash') %>
+
+    <!-- Status Tabs -->
+    <div class="mt-6 flex flex-wrap gap-2 border-b border-slate-200 pb-4">
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 text-white" data-status="all">Semua</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="tunggu_pembayaran">Tunggu Pembayaran</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="terkonfirmasi">Terkonfirmasi</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="dalam_perjalanan">Dalam Perjalanan</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="selesai">Selesai</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="reschedule">Reschedule</button>
+      <button class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="cancel">Cancel</button>
+    </div>
+
+    <div class="mt-6 space-y-4">
+      <% if (!orders.length) { %>
+        <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">Belum ada pesanan.</div>
+      <% } %>
+      <% orders.forEach((order) => { %>
+        <article class="order-card rounded-2xl bg-white p-5 shadow-sm" data-status="<%= order.status %>">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p class="text-xs uppercase tracking-wide text-slate-400">#<%= order.id %> · <%= serviceLabel(order.serviceType) %></p>
+              <h2 class="mt-1 text-lg font-semibold"><%= order.customerName %></h2>
+              <p class="text-sm text-slate-500"><%= order.customerPhone || '-' %> · <%= order.customerEmail || '-' %></p>
+            </div>
+            <span class="rounded-full px-3 py-1 text-xs font-medium <%= orderStatusColor(order.status) %>">
+              <%= orderStatusLabel(order.status) %>
+            </span>
+          </div>
+
+          <dl class="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+            <% if (order.serviceType === 'rental') { %>
+              <div><span class="text-slate-500">Tipe sewa:</span> <%= order.details.rentalType %></div>
+              <div><span class="text-slate-500">Tanggal ambil:</span> <%= order.details.pickupDate %></div>
+              <div><span class="text-slate-500">Durasi:</span> <%= order.details.durationDays %> hari</div>
+              <div><span class="text-slate-500">Armada:</span> <%= order.details.vehicleName || '-' %></div>
+              <% if (order.details.driverPackage) { %>
+                <div><span class="text-slate-500">Paket sopir:</span> <%= order.details.driverPackage === 'all-in' ? 'All-In (Bebas Ribet)' : 'Reguler (Sopir Saja)' %></div>
+                <div><span class="text-slate-500">Jasa sopir:</span> <%= rupiah(order.details.driverFee || 0) %></div>
+                <div><span class="text-slate-500">Pengali area:</span> <%= order.details.areaMultiplier || 1 %>x</div>
+                <div class="sm:col-span-2"><span class="text-slate-500">Komponen All-In:</span> <%= (order.details.driverAddons || []).length ? order.details.driverAddons.map((item) => item.label + ' ' + rupiah(item.line)).join(', ') : 'Tidak ada' %></div>
+                <div class="sm:col-span-2"><span class="text-slate-500">Ketentuan:</span> <%= order.details.serviceTerms || '-' %></div>
+              <% } %>
+            <% } %>
+            <div><span class="text-slate-500">Zona:</span> <%= order.details.zoneLabel || '-' %></div>
+            <div><span class="text-slate-500">Pembayaran:</span> <%= order.paymentMethod || order.details.paymentMethod || '-' %></div>
+            <div><span class="text-slate-500">Jemput:</span> <%= order.details.pickupLocation || '-' %></div>
+            <div><span class="text-slate-500">Antar:</span> <%= order.details.dropoffLocation || '-' %></div>
+            <div><span class="text-slate-500">Jam jemput:</span> <%= order.details.pickupTime || '-' %></div>
+            <div><span class="text-slate-500">Penerbangan:</span> <%= order.details.flightNumber || '-' %></div>
+            <div><span class="text-slate-500">Total:</span> <%= order.details.totalPrice ? rupiah(order.details.totalPrice) : '-' %></div>
+            <div class="sm:col-span-2"><span class="text-slate-500">Permintaan khusus:</span> <%= order.details.specialRequest || '-' %></div>
+            <% if (order.details.referenceImage) { %>
+              <div class="sm:col-span-2">
+                <a href="<%= order.details.referenceImage %>" class="text-brand-700 underline">File referensi</a>
+              </div>
+            <% } %>
+            <% if (order.details.staffIdentityPhoto || (order.details.staffCarConditionPhotos && order.details.staffCarConditionPhotos.length > 0)) { %>
+              <div class="sm:col-span-2 mt-4 pt-4 border-t border-slate-200">
+                <h3 class="font-semibold text-slate-900 mb-2">📷 Foto Serah Terima Staf</h3>
+                <% if (order.details.staffName) { %>
+                  <p class="text-sm text-slate-600 mb-2">Staf: <%= order.details.staffName %></p>
+                <% } %>
+                <% if (order.details.staffIdentityPhoto) { %>
+                  <div class="mb-3">
+                    <p class="text-sm text-slate-500 mb-1">Foto Identitas Penyewa:</p>
+                    <a href="<%= order.details.staffIdentityPhoto %>" target="_blank" class="inline-block">
+                      <img src="<%= order.details.staffIdentityPhoto %>" alt="Foto Identitas" class="max-w-48 h-auto rounded-lg border border-slate-200 hover:opacity-80 transition-opacity">
+                    </a>
+                  </div>
+                <% } %>
+                <% if (order.details.staffCarConditionPhotos && order.details.staffCarConditionPhotos.length > 0) { %>
+                  <div>
+                    <p class="text-sm text-slate-500 mb-1">Foto Kondisi Mobil:</p>
+                    <div class="grid grid-cols-3 gap-2">
+                      <% order.details.staffCarConditionPhotos.forEach((photo) => { %>
+                        <a href="<%= photo %>" target="_blank" class="inline-block">
+                          <img src="<%= photo %>" alt="Foto Kondisi Mobil" class="w-full h-auto rounded-lg border border-slate-200 hover:opacity-80 transition-opacity">
+                        </a>
+                      <% }) %>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            <% } %>
+            <% if (order.serviceType === 'airport') { %>
+              <div><span class="text-slate-500">Layanan:</span> <%= order.details.serviceKind %></div>
+              <div><span class="text-slate-500">Landing:</span> <%= order.details.landingAt %></div>
+              <div><span class="text-slate-500">Hotel:</span> <%= order.details.hotelLocation %></div>
+            <% } %>
+            <% if (order.serviceType === 'tour') { %>
+              <div><span class="text-slate-500">Paket:</span> <%= order.details.packageType %></div>
+              <div><span class="text-slate-500">Peserta:</span> <%= order.details.participantCount %></div>
+              <div class="sm:col-span-2"><span class="text-slate-500">Catatan:</span> <%= order.details.notes || '-' %></div>
+            <% } %>
+          </dl>
+
+          <% if (order.assignedEmployeeName) { %>
+            <p class="mt-3 text-sm text-brand-700">Ditugaskan ke: <strong><%= order.assignedEmployeeName %></strong></p>
+          <% } %>
+
+          <form action="/admin/pesanan/<%= order.id %>/tugaskan" method="post" class="mt-4 flex flex-col gap-2 sm:flex-row">
+            <select name="employeeId" required class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm">
+              <option value="">Pilih karyawan / sopir</option>
+              <% employees.forEach((employee) => { %>
+                <option value="<%= employee.id %>"><%= employee.name %> — <%= employee.position %></option>
+              <% }) %>
+            </select>
+            <button class="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Tugaskan</button>
+          </form>
+          <div class="mt-3 flex flex-wrap gap-3">
+            <a href="/voucher/<%= order.id %>" class="text-sm font-semibold text-brand-700">Lihat e-voucher</a>
+            <% if (order.customerPhone) { %>
+              <a href="<%= whatsAppConfirmLink(order) %>" target="_blank" rel="noopener" class="text-sm font-semibold text-emerald-700">Hubungi/Kirim Konfirmasi via WA</a>
+            <% } %>
+            <% if (driverTaskLink(order)) { %>
+              <a href="<%= driverTaskLink(order) %>" target="_blank" class="text-sm font-semibold text-sky-700">Link Tugas Driver</a>
+            <% } %>
+            <% if (staffCheckLink(order)) { %>
+              <a href="<%= staffCheckLink(order) %>" target="_blank" class="text-sm font-semibold text-emerald-700">Link Serah Terima Staf</a>
+            <% } %>
+          </div>
+
+          <!-- WhatsApp Share Buttons -->
+          <div class="mt-3 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+            <% if (driverTaskLink(order) && order.assignedEmployeeName) { %>
+              <a href="<%= driverWhatsAppLink(order, order.assignedEmployeeName) %>" target="_blank" rel="noopener" 
+                 class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 shadow-sm">
+                <span>�</span> Bagikan Link ke Driver via WA
+              </a>
+            <% } %>
+            <% if (staffCheckLink(order)) { %>
+              <a href="<%= staffWhatsAppLink(order, 'Staf Lapangan') %>" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 shadow-sm">
+                <span>�</span> Bagikan Link ke Staf Lapangan via WA
+              </a>
+            <% } %>
+          </div>
+
+          <!-- Status Actions -->
+          <div class="mt-3 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+            <% if (order.status === 'tunggu_pembayaran') { %>
+              <form action="/admin/pesanan/<%= order.id %>/konfirmasi-pembayaran" method="post" class="inline">
+                <button class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700">Konfirmasi Pembayaran</button>
+              </form>
+            <% } %>
+            <% if (order.status === 'terkonfirmasi') { %>
+              <form action="/admin/pesanan/<%= order.id %>/mulai-perjalanan" method="post" class="inline">
+                <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700">Mulai Perjalanan</button>
+              </form>
+            <% } %>
+            <% if (order.status === 'terkonfirmasi' || order.status === 'dalam_perjalanan') { %>
+              <form action="/admin/pesanan/<%= order.id %>/reschedule" method="post" class="inline" onsubmit="return confirm('Tandai pesanan ini sebagai reschedule?')">
+                <button class="px-3 py-1.5 bg-orange-600 text-white rounded-lg text-xs font-medium hover:bg-orange-700">Reschedule</button>
+              </form>
+              <form action="/admin/pesanan/<%= order.id %>/cancel" method="post" class="inline" onsubmit="return confirm('Batalkan pesanan ini?')">
+                <button class="px-3 py-1.5 bg-gray-600 text-white rounded-lg text-xs font-medium hover:bg-gray-700">Cancel</button>
+              </form>
+            <% } %>
+          <% if (order.status !== 'selesai' && order.status !== 'terkonfirmasi' && order.status !== 'dalam_perjalanan' && order.status !== 'reschedule' && order.status !== 'cancel' && order.status !== 'tunggu_pembayaran') { %>
+            <form action="/admin/pesanan/<%= order.id %>/konfirmasi" method="post" class="mt-3">
+              <button class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Tandai Dikonfirmasi &amp; kirim email</button>
+            </form>
+          <% } %>
+          <% if (order.status !== 'selesai') { %>
+            <form action="/admin/pesanan/<%= order.id %>/selesai" method="post" class="mt-3 space-y-2">
+              <% if (order.serviceType === 'rental' && /sopir/i.test(order.details.rentalType || '')) { %>
+                <label class="block text-sm text-slate-600">Jam pemakaian (maks. 10 jam, selebihnya overtime 10%/jam)
+                  <input name="hoursUsed" type="number" min="0" step="0.5" value="10" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+                </label>
+              <% } %>
+              <% if (/lepas/i.test(order.details.rentalType || '')) { %>
+                <label class="block text-sm text-slate-600">Jam keterlambatan pengembalian
+                  <input name="lateHours" type="number" min="0" step="0.5" value="0" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+                </label>
+              <% } %>
+              <button class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-100">Proses pengembalian &amp; catat kas</button>
+            </form>
+          <% } %>
+        </article>
+      <% }) %>
+    </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.status-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const status = tab.dataset.status;
+      
+      // Update tab styles
+      document.querySelectorAll('.status-tab').forEach(t => {
+        t.classList.remove('bg-brand-600', 'text-white');
+        t.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      tab.classList.remove('bg-slate-100', 'text-slate-600');
+      tab.classList.add('bg-brand-600', 'text-white');
+      
+      // Filter orders
+      document.querySelectorAll('.order-card').forEach(card => {
+        if (status === 'all' || card.dataset.status === status) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
