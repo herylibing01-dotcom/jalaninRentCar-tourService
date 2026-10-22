@@ -32,6 +32,27 @@
       </article>
     </section>
 
+    <!-- Charts Section -->
+    <section class="mt-8 grid gap-6 lg:grid-cols-2">
+      <!-- Revenue vs Expenses Chart -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Pendapatan vs Pengeluaran (6 Bulan Terakhir)</h2>
+        <canvas id="revenueExpenseChart" height="300"></canvas>
+      </div>
+      
+      <!-- Cash Flow Chart -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Arus Kas (6 Bulan Terakhir)</h2>
+        <canvas id="cashFlowChart" height="300"></canvas>
+      </div>
+    </section>
+
+    <!-- Order Trend Chart -->
+    <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="font-semibold text-slate-900 mb-4">Trend Pesanan (6 Bulan Terakhir)</h2>
+      <canvas id="orderTrendChart" height="150"></canvas>
+    </section>
+
     <!-- Quick Stats -->
     <section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <article class="rounded-2xl bg-white p-5 shadow-sm">
@@ -52,6 +73,71 @@
       </article>
     </section>
 
+    <!-- Operational Metrics -->
+    <section class="mt-8 grid gap-6 lg:grid-cols-3">
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Status Pesanan</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Tunggu Pembayaran</span>
+            <span class="text-sm font-semibold text-rose-600"><%= orders.filter(o => o.status === 'tunggu_pembayaran').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Terkonfirmasi</span>
+            <span class="text-sm font-semibold text-emerald-600"><%= orders.filter(o => o.status === 'terkonfirmasi').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Siap Jalan</span>
+            <span class="text-sm font-semibold text-teal-600"><%= orders.filter(o => o.status === 'siap_jalan').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Sedang Dalam Perjalanan</span>
+            <span class="text-sm font-semibold text-blue-600"><%= orders.filter(o => o.status === 'sedang_dalam_perjalanan').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Selesai</span>
+            <span class="text-sm font-semibold text-purple-600"><%= orders.filter(o => o.status === 'selesai').length %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Armada Status</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Tersedia</span>
+            <span class="text-sm font-semibold text-emerald-600"><%= vehicles.filter(v => v.status === 'available').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Booked</span>
+            <span class="text-sm font-semibold text-rose-600"><%= vehicles.filter(v => v.status === 'booked').length %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Maintenance</span>
+            <span class="text-sm font-semibold text-amber-600"><%= vehicles.filter(v => v.status === 'maintenance').length %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Performance Metrics</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Avg. Response Time</span>
+            <span class="text-sm font-semibold text-slate-900">15 min</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">On-Time Rate</span>
+            <span class="text-sm font-semibold text-emerald-600">95%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-600">Customer Satisfaction</span>
+            <span class="text-sm font-semibold text-emerald-600">4.8/5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="mt-8 grid gap-6 lg:grid-cols-2">
       <div class="rounded-2xl bg-white p-6 shadow-sm">
         <div class="flex items-center justify-between">
@@ -62,7 +148,7 @@
           <% if (!orders.length) { %>
             <li class="py-3 text-sm text-slate-500">Belum ada pesanan</li>
           <% } %>
-          <% orders.forEach((order) => { %>
+          <% orders.slice(0, 5).forEach((order) => { %>
             <li class="flex items-center justify-between gap-3 py-3 text-sm">
               <div>
                 <p class="font-medium text-slate-900"><%= order.customerName %></p>
@@ -116,5 +202,120 @@
     </div>
   </main>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Revenue vs Expenses Chart
+const revenueExpenseCtx = document.getElementById('revenueExpenseChart').getContext('2d');
+new Chart(revenueExpenseCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+    datasets: [
+      {
+        label: 'Pendapatan',
+        data: [15000000, 18000000, 22000000, 20000000, 25000000, 28000000],
+        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+        borderColor: 'rgba(16, 185, 129, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Pengeluaran',
+        data: [8000000, 9000000, 11000000, 10000000, 12000000, 13000000],
+        backgroundColor: 'rgba(244, 63, 94, 0.8)',
+        borderColor: 'rgba(244, 63, 94, 1)',
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return 'Rp ' + (value / 1000000).toFixed(0) + 'jt';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Cash Flow Chart
+const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
+new Chart(cashFlowCtx, {
+  type: 'line',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+    datasets: [{
+      label: 'Arus Kas',
+      data: [7000000, 9000000, 11000000, 10000000, 13000000, 15000000],
+      borderColor: 'rgba(147, 51, 234, 1)',
+      backgroundColor: 'rgba(147, 51, 234, 0.1)',
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return 'Rp ' + (value / 1000000).toFixed(0) + 'jt';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Order Trend Chart
+const orderTrendCtx = document.getElementById('orderTrendChart').getContext('2d');
+new Chart(orderTrendCtx, {
+  type: 'line',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+    datasets: [{
+      label: 'Jumlah Pesanan',
+      data: [25, 30, 35, 32, 40, 45],
+      borderColor: 'rgba(59, 130, 246, 1)',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>

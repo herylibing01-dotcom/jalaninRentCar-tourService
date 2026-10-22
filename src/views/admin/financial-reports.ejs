@@ -8,7 +8,7 @@
     <p class="mt-1 text-slate-500">Sistem keuangan perusahaan dengan laporan laba rugi, neraca, dan arus kas</p>
     <%- include('../partials/flash') %>
 
-    <!-- Period Filter -->
+    <!-- Period Filter & Export -->
     <div class="mt-6 rounded-2xl bg-white p-4 shadow-sm">
       <div class="flex flex-wrap gap-4 items-center">
         <div>
@@ -30,9 +30,12 @@
             <input type="date" id="endDate" class="rounded-lg border border-slate-200 px-3 py-2 text-sm">
           </div>
         </div>
-        <div class="ml-auto">
-          <button onclick="exportReport()" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-            Export Laporan
+        <div class="ml-auto flex gap-2">
+          <button onclick="exportToPDF()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700">
+            Export PDF
+          </button>
+          <button onclick="exportToExcel()" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+            Export Excel
           </button>
         </div>
       </div>
@@ -60,6 +63,18 @@
         <p class="mt-2 text-2xl font-semibold text-purple-700"><%= rupiah(cashFlow) %></p>
         <p class="mt-1 text-xs text-slate-400">Arus kas bersih</p>
       </article>
+    </section>
+
+    <!-- Financial Charts -->
+    <section class="mt-6 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Pendapatan vs Pengeluaran</h2>
+        <canvas id="revenueExpenseChart" height="250"></canvas>
+      </div>
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <h2 class="font-semibold text-slate-900 mb-4">Distribusi Pengeluaran</h2>
+        <canvas id="expenseDistributionChart" height="250"></canvas>
+      </div>
     </section>
 
     <!-- Income Statement (Laba Rugi) -->
@@ -257,6 +272,12 @@
   </main>
 </div>
 
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
 document.getElementById('periodFilter').addEventListener('change', function() {
   const customRange = document.getElementById('customDateRange');
@@ -267,8 +288,121 @@ document.getElementById('periodFilter').addEventListener('change', function() {
   }
 });
 
-function exportReport() {
-  alert('Fitur export akan tersedia setelah integrasi dengan library PDF/Excel');
+// Revenue vs Expenses Chart
+const revenueExpenseCtx = document.getElementById('revenueExpenseChart').getContext('2d');
+new Chart(revenueExpenseCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+    datasets: [
+      {
+        label: 'Pendapatan',
+        data: [15000000, 18000000, 22000000, 20000000, 25000000, 28000000],
+        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+        borderColor: 'rgba(16, 185, 129, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Pengeluaran',
+        data: [8000000, 9000000, 11000000, 10000000, 12000000, 13000000],
+        backgroundColor: 'rgba(244, 63, 94, 0.8)',
+        borderColor: 'rgba(244, 63, 94, 1)',
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return 'Rp ' + (value / 1000000).toFixed(0) + 'jt';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Expense Distribution Chart
+const expenseDistributionCtx = document.getElementById('expenseDistributionChart').getContext('2d');
+new Chart(expenseDistributionCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Operasional', 'Gaji', 'Komisi'],
+    datasets: [{
+      data: [<%= (data.operationalExpenses || 0) / 1000000 %>, <%= (data.salaryExpenses || 0) / 1000000 %>, <%= (data.driverCommission || 0) / 1000000 %>],
+      backgroundColor: [
+        'rgba(16, 185, 129, 0.8)',
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(244, 63, 94, 0.8)'
+      ],
+      borderColor: [
+        'rgba(16, 185, 129, 1)',
+        'rgba(59, 130, 246, 1)',
+        'rgba(244, 63, 94, 1)'
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+      }
+    }
+  }
+});
+
+// Export to PDF
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  doc.setFontSize(18);
+  doc.text('Laporan Keuangan - Jalanin Rent Car', 14, 20);
+  doc.setFontSize(12);
+  doc.text('Periode: <%= periodLabel %>', 14, 30);
+  
+  doc.text('Ringkasan:', 14, 45);
+  doc.text(`Total Pendapatan: <%= rupiah(totalRevenue) %>`, 14, 55);
+  doc.text(`Total Pengeluaran: <%= rupiah(totalExpenses) %>`, 14, 62);
+  doc.text(`Laba Bersih: <%= rupiah(netProfit) %>`, 14, 69);
+  
+  doc.save('laporan-keuangan.pdf');
+}
+
+// Export to Excel
+function exportToExcel() {
+  const data = [
+    ['Kategori', 'Jumlah', 'Persentase'],
+    ['PENDAPATAN', '', ''],
+    ['Pendapatan Rental', '<%= (data.rentalIncome || 0) %>', '<%= ((data.rentalIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Pendapatan Tour', '<%= (data.tourIncome || 0) %>', '<%= ((data.tourIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Pendapatan Airport', '<%= (data.airportIncome || 0) %>', '<%= ((data.airportIncome || 0) / (totalRevenue || 1) * 100).toFixed(2) %>%'],
+    ['Total Pendapatan', '<%= totalRevenue %>', '100%'],
+    ['PENGELUARAN', '', ''],
+    ['Pengeluaran Operasional', '<%= (data.operationalExpenses || 0) %>', '<%= ((data.operationalExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Gaji Karyawan', '<%= (data.salaryExpenses || 0) %>', '<%= ((data.salaryExpenses || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Komisi Driver', '<%= (data.driverCommission || 0) %>', '<%= ((data.driverCommission || 0) / (totalExpenses || 1) * 100).toFixed(2) %>%'],
+    ['Total Pengeluaran', '<%= totalExpenses %>', '100%'],
+    ['LABA BERSIH', '<%= netProfit %>', '<%= profitMargin %>%']
+  ];
+  
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Laporan Keuangan');
+  XLSX.writeFile(wb, 'laporan-keuangan.xlsx');
 }
 </script>
 </body>
