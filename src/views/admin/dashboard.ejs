@@ -4,74 +4,113 @@
   <main class="min-w-0 flex-1 overflow-x-auto">
     <%- include('../partials/breadcrumb') %>
     <div class="p-8">
-    <h1 class="text-2xl font-semibold text-slate-900"><%= t('dash.title') %></h1>
-    <p class="mt-1 text-slate-500"><%= t('dash.subtitle') %></p>
+    <h1 class="text-2xl font-semibold text-slate-900">Dashboard Internal</h1>
+    <p class="mt-1 text-slate-500">Ringkasan operasional dan keuangan perusahaan</p>
     <%- include('../partials/flash') %>
 
-    <section class="mt-8 grid gap-4 sm:grid-cols-2">
+    <!-- Financial KPI Cards -->
+    <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-emerald-500">
+        <p class="text-sm text-slate-500">Total Pendapatan</p>
+        <p class="mt-2 text-3xl font-semibold text-emerald-600"><%= rupiah(financialSummary.income || 0) %></p>
+        <p class="mt-1 text-xs text-slate-400">Pendapatan bersih</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-rose-500">
+        <p class="text-sm text-slate-500">Total Pengeluaran</p>
+        <p class="mt-2 text-3xl font-semibold text-rose-600"><%= rupiah(financialSummary.expenses || 0) %></p>
+        <p class="mt-1 text-xs text-slate-400">Semua kategori</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-blue-500">
+        <p class="text-sm text-slate-500">Pesanan Aktif</p>
+        <p class="mt-2 text-3xl font-semibold text-blue-600"><%= activeOrders %></p>
+        <p class="mt-1 text-xs text-slate-400">Sedang berjalan</p>
+      </article>
+      <article class="rounded-2xl bg-white p-5 shadow-sm border-l-4 border-purple-500">
+        <p class="text-sm text-slate-500">Laba Bersih</p>
+        <p class="mt-2 text-3xl font-semibold text-purple-600"><%= rupiah((financialSummary.income || 0) - (financialSummary.expenses || 0)) %></p>
+        <p class="mt-1 text-xs text-slate-400">Profitabilitas</p>
+      </article>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <article class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500"><%= t('dash.newOrders') %></p>
-        <p class="mt-2 text-3xl font-semibold text-amber-600"><%= stats.newOrderCount %></p>
+        <p class="text-sm text-slate-500">Pesanan Baru</p>
+        <p class="mt-2 text-2xl font-semibold text-amber-600"><%= stats.newOrderCount %></p>
       </article>
       <article class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500"><%= t('dash.totalOrders') %></p>
-        <p class="mt-2 text-3xl font-semibold"><%= stats.orderCount %></p>
+        <p class="text-sm text-slate-500">Total Pesanan</p>
+        <p class="mt-2 text-2xl font-semibold"><%= stats.orderCount %></p>
       </article>
       <article class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500"><%= t('dash.fleet') %></p>
-        <p class="mt-2 text-3xl font-semibold"><%= stats.vehicleCount %></p>
+        <p class="text-sm text-slate-500">Armada</p>
+        <p class="mt-2 text-2xl font-semibold"><%= stats.vehicleCount %></p>
       </article>
       <article class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500"><%= t('dash.staff') %></p>
-        <p class="mt-2 text-3xl font-semibold"><%= stats.employeeCount %></p>
+        <p class="text-sm text-slate-500">Karyawan</p>
+        <p class="mt-2 text-2xl font-semibold"><%= stats.employeeCount %></p>
       </article>
     </section>
 
     <section class="mt-8 grid gap-6 lg:grid-cols-2">
       <div class="rounded-2xl bg-white p-6 shadow-sm">
         <div class="flex items-center justify-between">
-          <h2 class="font-semibold"><%= t('dash.recent') %></h2>
-          <a href="/admin/pesanan" class="text-sm text-brand-700"><%= t('dash.seeAll') %></a>
+          <h2 class="font-semibold">Pesanan Terbaru</h2>
+          <a href="/admin/pesanan" class="text-sm text-brand-700">Lihat Semua</a>
         </div>
         <ul class="mt-4 divide-y divide-slate-100">
           <% if (!orders.length) { %>
-            <li class="py-3 text-sm text-slate-500"><%= t('dash.empty') %></li>
+            <li class="py-3 text-sm text-slate-500">Belum ada pesanan</li>
           <% } %>
           <% orders.forEach((order) => { %>
             <li class="flex items-center justify-between gap-3 py-3 text-sm">
-              <span><%= order.customerName %> · <%= serviceLabel(order.serviceType) %></span>
-              <span class="<%= order.status === 'baru' ? 'text-amber-600' : 'text-emerald-600' %>"><%= orderStatusLabel(order.status) %></span>
+              <div>
+                <p class="font-medium text-slate-900"><%= order.customerName %></p>
+                <p class="text-xs text-slate-500"><%= serviceLabel(order.serviceType) %></p>
+              </div>
+              <span class="rounded-full px-2 py-1 text-xs font-medium <%= orderStatusColor(order.status) %>"><%= orderStatusLabel(order.status) %></span>
             </li>
           <% }) %>
         </ul>
       </div>
       <div class="rounded-2xl bg-white p-6 shadow-sm">
         <div class="flex items-center justify-between">
-          <h2 class="font-semibold"><%= t('nav.fleet') %></h2>
-          <a href="/admin/armada" class="text-sm text-brand-700"><%= t('dash.manage') %></a>
+          <h2 class="font-semibold">Armada</h2>
+          <a href="/admin/armada" class="text-sm text-brand-700">Kelola</a>
         </div>
         <ul class="mt-4 divide-y divide-slate-100">
+          <% if (!vehicles.length) { %>
+            <li class="py-3 text-sm text-slate-500">Belum ada armada</li>
+          <% } %>
           <% vehicles.slice(0, 5).forEach((vehicle) => { %>
             <li class="flex items-center justify-between py-3 text-sm">
               <span><%= vehicle.name %></span>
-              <span class="<%= vehicle.status === 'available' ? 'text-emerald-600' : 'text-amber-600' %>"><%= vehicle.status === 'available' ? 'Tersedia' : 'Disewa' %></span>
+              <span class="<%= vehicle.status === 'available' ? 'text-emerald-600' : 'text-rose-600' %>"><%= vehicle.status === 'available' ? 'Tersedia' : 'Booked' %></span>
             </li>
           <% }) %>
         </ul>
       </div>
-      <div class="rounded-2xl bg-white p-6 shadow-sm">
-        <div class="flex items-center justify-between">
-          <h2 class="font-semibold"><%= t('dash.staff') %></h2>
-          <a href="/admin/karyawan" class="text-sm text-brand-700"><%= t('dash.manage') %></a>
+    </section>
+
+    <!-- Assignment Status -->
+    <section class="mt-8 rounded-2xl bg-white p-6 shadow-sm">
+      <div class="flex items-center justify-between">
+        <h2 class="font-semibold">Status Penugasan</h2>
+        <a href="/admin/penugasan-aktif" class="text-sm text-brand-700">Lihat Detail</a>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-xl bg-teal-50 p-4">
+          <p class="text-sm text-teal-600">Siap Jalan</p>
+          <p class="mt-2 text-2xl font-semibold text-teal-700"><%= orders.filter(o => o.status === 'siap_jalan').length %></p>
         </div>
-        <ul class="mt-4 divide-y divide-slate-100">
-          <% employees.forEach((employee) => { %>
-            <li class="flex items-center justify-between py-3 text-sm">
-              <span><%= employee.name %></span>
-              <span class="text-slate-500"><%= employee.position %></span>
-            </li>
-          <% }) %>
-        </ul>
+        <div class="rounded-xl bg-blue-50 p-4">
+          <p class="text-sm text-blue-600">Sedang Dalam Perjalanan</p>
+          <p class="mt-2 text-2xl font-semibold text-blue-700"><%= orders.filter(o => o.status === 'sedang_dalam_perjalanan').length %></p>
+        </div>
+        <div class="rounded-xl bg-emerald-50 p-4">
+          <p class="text-sm text-emerald-600">Selesai Hari Ini</p>
+          <p class="mt-2 text-2xl font-semibold text-emerald-700"><%= orders.filter(o => o.status === 'selesai').length %></p>
+        </div>
       </div>
     </section>
     </div>

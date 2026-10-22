@@ -3,7 +3,7 @@
   const groups = {
     ringkasan: ["dashboard", "testimonials", "traffic"],
     penugasan: ["assignments", "drivers", "staff"],
-    keuangan: ["payroll", "payments", "employees"],
+    keuangan: ["finance", "financial-reports", "payroll", "payments", "employees"],
     pengaturan: ["fleet", "pricing", "zones"],
   };
   const groupOpen = (name) => groups[name].includes(current);
@@ -69,6 +69,8 @@
       </button>
       <div class="menu-panel">
         <div class="overflow-hidden">
+          <a href="/admin/keuangan" class="<%= itemClass('finance') %>">Dashboard Keuangan</a>
+          <a href="/admin/financial-reports" class="<%= itemClass('financial-reports') %>">Laporan Lengkap</a>
           <a href="/admin/gaji" class="<%= itemClass('payroll') %>">Perhitungan Gaji</a>
           <a href="/admin/pembayaran" class="<%= itemClass('payments') %>">Pembayaran</a>
           <a href="/admin/karyawan" class="<%= itemClass('employees') %>">Data Karyawan</a>

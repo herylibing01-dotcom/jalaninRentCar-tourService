@@ -13,13 +13,19 @@ router.use(requireRole("admin"));
 
 router.get("/", (req, res) => {
   const data = db.stats();
+  const financialSummary = db.getFinancialSummary({});
+  const orders = db.getOrders();
+  const activeOrders = orders.filter(o => ['siap_jalan', 'sedang_dalam_perjalanan'].includes(o.status)).length;
+  
   res.render("admin/dashboard", {
     title: "Dashboard Internal",
     stats: data,
+    financialSummary,
     vehicles: db.getVehicles(),
     employees: db.getEmployees(),
     payrolls: db.getPayrolls().slice(0, 5),
     orders: db.getOrders().slice(0, 6),
+    activeOrders,
   });
 });
 
@@ -113,6 +119,107 @@ router.get("/staff", (req, res) => {
     activeStaffIds,
     staffTaskCounts,
     activeOrderCounts,
+  });
+});
+
+router.get("/financial-reports", (req, res) => {
+  const data = db.getFinancialSummary({});
+  const transactions = db.getTransactions();
+  const expenses = db.getExpenses();
+  
+  // Calculate total revenue
+  const totalRevenue = data.income || 0;
+  const totalExpenses = data.expenses || 0;
+  const netProfit = totalRevenue - totalExpenses;
+  const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(2) : 0;
+  
+  // Income items breakdown
+  const incomeItems = [
+    { label: 'Pendapatan Rental', amount: data.rentalIncome || 0 },
+    { label: 'Pendapatan Tour', amount: data.tourIncome || 0 },
+    { label: 'Pendapatan Airport', amount: data.airportIncome || 0 },
+  ].map(item => ({
+    ...item,
+    percentage: totalRevenue > 0 ? ((item.amount / totalRevenue) * 100).toFixed(2) : 0
+  }));
+  
+  // Expense items breakdown
+  const expenseItems = [
+    { label: 'Pengeluaran Operasional', amount: data.operationalExpenses || 0 },
+    { label: 'Gaji Karyawan', amount: data.salaryExpenses || 0 },
+    { label: 'Komisi Driver', amount: data.driverCommission || 0 },
+  ].map(item => ({
+    ...item,
+    percentage: totalExpenses > 0 ? ((item.amount / totalExpenses) * 100).toFixed(2) : 0
+  }));
+  
+  // Balance sheet calculations
+  const cashAndEquivalents = transactions.filter(t => t.type === 'cash').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+  const accountsReceivable = orders.filter(o => o.status === 'terkonfirmasi' && !o.paid).reduce((sum, o) => sum + Number(o.totalPrice || 0), 0);
+  const inventory = 0; // Can be calculated from spare parts, fuel, etc.
+  const fixedAssets = db.getVehicles().reduce((sum, v) => sum + Number(v.purchasePrice || 0), 0);
+  const totalAssets = cashAndEquivalents + accountsReceivable + inventory + fixedAssets;
+  
+  const accountsPayable = expenses.filter(e => e.status === 'pending').reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const payrollPayable = data.payrollPending || 0;
+  const retainedEarnings = netProfit;
+  const ownerEquity = 0; // Can be set as initial capital
+  const totalLiabilitiesAndEquity = accountsPayable + payrollPayable + retainedEarnings + ownerEquity;
+  
+  // Cash flow calculations
+  const operatingCashFlow = [
+    { label: 'Penerimaan dari pelanggan', in: totalRevenue, out: 0, net: totalRevenue },
+    { label: 'Pembayaran operasional', in: 0, out: data.operationalExpenses || 0, net: -(data.operationalExpenses || 0) },
+    { label: 'Pembayaran gaji', in: 0, out: data.salaryExpenses || 0, net: -(data.salaryExpenses || 0) },
+  ];
+  
+  const investingCashFlow = [
+    { label: 'Pembelian armada', in: 0, out: 0, net: 0 },
+    { label: 'Penjualan armada', in: 0, out: 0, net: 0 },
+  ];
+  
+  const totalOperatingIn = operatingCashFlow.reduce((sum, item) => sum + item.in, 0);
+  const totalOperatingOut = operatingCashFlow.reduce((sum, item) => sum + item.out, 0);
+  const netOperatingCash = totalOperatingIn - totalOperatingOut;
+  
+  const totalInvestingIn = investingCashFlow.reduce((sum, item) => sum + item.in, 0);
+  const totalInvestingOut = investingCashFlow.reduce((sum, item) => sum + item.out, 0);
+  const netInvestingCash = totalInvestingIn - totalInvestingOut;
+  
+  const totalCashIn = totalOperatingIn + totalInvestingIn;
+  const totalCashOut = totalOperatingOut + totalInvestingOut;
+  const cashFlow = totalCashIn - totalCashOut;
+  
+  res.render("admin/financial-reports", {
+    title: "Laporan Keuangan Lengkap",
+    periodLabel: "Bulan Ini",
+    totalRevenue,
+    totalExpenses,
+    netProfit,
+    profitMargin,
+    incomeItems,
+    expenseItems,
+    cashAndEquivalents,
+    accountsReceivable,
+    inventory,
+    fixedAssets,
+    totalAssets,
+    accountsPayable,
+    payrollPayable,
+    retainedEarnings,
+    ownerEquity,
+    totalLiabilitiesAndEquity,
+    operatingCashFlow,
+    investingCashFlow,
+    totalOperatingIn,
+    totalOperatingOut,
+    netOperatingCash,
+    totalInvestingIn,
+    totalInvestingOut,
+    netInvestingCash,
+    totalCashIn,
+    totalCashOut,
+    cashFlow,
   });
 });
 
