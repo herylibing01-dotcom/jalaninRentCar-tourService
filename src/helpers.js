@@ -81,6 +81,10 @@ function sectionFor(path) {
     ["/login", "Masuk"],
     ["/daftar", "Daftar"],
     ["/", "Beranda"],
+    ["/about", "Tentang Kami"],
+    ["/blog", "Blog"],
+    ["/gallery", "Galeri"],
+    ["/faq", "FAQ"],
   ];
   const hit = routes.find(([href]) => path === href || (href !== "/" && path.startsWith(href)));
   return hit ? { href: hit[0], label: hit[1] } : { href: "/", label: "Beranda" };

@@ -521,6 +521,26 @@ function getOrderById(id) {
   return load().orders.find((order) => order.id === Number(id));
 }
 
+function assignOrder(orderId, employeeId) {
+  const data = load();
+  const employee = data.employees.find(e => e.id === Number(employeeId));
+  if (!employee) return false;
+  
+  const orderIndex = data.orders.findIndex(o => o.id === Number(orderId));
+  if (orderIndex === -1) return false;
+  
+  const bookingIndex = data.bookings.findIndex(b => b.id === Number(orderId));
+  if (bookingIndex === -1) return false;
+  
+  data.orders[orderIndex].assignedEmployeeId = employee.id;
+  data.orders[orderIndex].assignedEmployeeName = employee.name;
+  data.bookings[bookingIndex].assignedEmployeeId = employee.id;
+  data.bookings[bookingIndex].assignedEmployeeName = employee.name;
+  
+  save(data);
+  return true;
+}
+
 function createOrder(payload) {
   const data = load();
   const order = {

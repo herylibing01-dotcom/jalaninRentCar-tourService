@@ -80,6 +80,7 @@ app.use((req, res, next) => {
   res.locals.driverWhatsAppLink = driverWhatsAppLink;
   res.locals.staffWhatsAppLink = staffWhatsAppLink;
   res.locals.orderStatusColor = orderStatusColor;
+  res.locals.orderEditable = orderEditable;
   const pricing = db.getPricingSettings();
   res.locals.pricing = pricing;
   res.locals.tourPackages = pricing.tours;
@@ -150,11 +151,27 @@ app.get("/gallery", (req, res) => {
 
 app.use(authRoutes);
 app.use("/admin", adminRoutes);
-app.use(orderRoutes);
-app.use(bookingRoutes);
+app.use("/pesanan", orderRoutes);
+app.use("/task", driverRoutes);
+app.use("/check", staffRoutes);
+app.use("/checkout", bookingRoutes);
 app.use(customerRoutes);
-app.use(driverRoutes);
-app.use(staffRoutes);
+
+// Voucher route (needs to be before 404)
+app.get("/voucher/:id", (req, res) => {
+  const order = db.getOrderById(req.params.id);
+  if (!order) {
+    req.session.flash = { type: "error", message: "E-voucher tidak ditemukan." };
+    return res.redirect("/");
+  }
+  const editable = req.session.user && req.session.user.role === 'customer' && order.userId === req.session.user.id && orderEditable(order);
+  res.render("voucher", {
+    title: `E-tiket #${order.id}`,
+    order,
+    editable,
+    editExpired: !orderEditable(order),
+  });
+});
 
 app.use((req, res) => {
   res.status(404).render("not-found", { title: "Halaman tidak ditemukan" });

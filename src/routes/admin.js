@@ -116,6 +116,17 @@ router.get("/staff", (req, res) => {
   });
 });
 
+router.post("/pesanan/:id/tugaskan", (req, res) => {
+  const { employeeId } = req.body;
+  const success = db.assignOrder(req.params.id, employeeId);
+  if (success) {
+    req.session.flash = { type: "success", message: "Driver/Staf berhasil ditugaskan." };
+  } else {
+    req.session.flash = { type: "error", message: "Gagal menugaskan driver/staf." };
+  }
+  res.redirect("/admin/pesanan");
+});
+
 router.post("/direct-booking", (req, res) => {
   const body = req.body || {};
   const customerName = String(body.customerName || "").trim();
