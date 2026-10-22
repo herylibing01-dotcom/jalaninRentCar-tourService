@@ -13,9 +13,21 @@ router.use(requireRole("admin"));
 
 router.get("/", (req, res) => {
   const data = db.stats();
-  const financialSummary = db.getFinancialSummary({});
+  const financialData = db.getFinancialSummary({});
   const orders = db.getOrders();
   const activeOrders = orders.filter(o => ['siap_jalan', 'sedang_dalam_perjalanan'].includes(o.status)).length;
+  
+  // Map financial data to expected structure
+  const financialSummary = {
+    income: financialData.totalIncome || 0,
+    expenses: financialData.totalExpenses || 0,
+    rentalIncome: financialData.incomeBreakdown?.rental || 0,
+    tourIncome: financialData.incomeBreakdown?.tour || 0,
+    airportIncome: financialData.incomeBreakdown?.airport || 0,
+    operationalExpenses: financialData.expenseBreakdown?.operational || 0,
+    salaryExpenses: financialData.expenseBreakdown?.salary || 0,
+    driverCommission: financialData.expenseBreakdown?.commission || 0,
+  };
   
   res.render("admin/dashboard", {
     title: "Dashboard Internal",
