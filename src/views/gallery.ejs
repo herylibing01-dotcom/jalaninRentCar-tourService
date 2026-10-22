@@ -1,0 +1,196 @@
+<%- include('partials/head') %>
+<%- include('partials/breadcrumb') %>
+<main class="min-h-screen bg-slate-100 px-3 py-8">
+  <div class="mx-auto max-w-6xl">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-slate-900">Galeri</h1>
+      <p class="mt-2 text-slate-600">Koleksi foto perjalanan dan armada kami</p>
+    </header>
+
+    <!-- Gallery Filter -->
+    <div class="mb-8 flex flex-wrap justify-center gap-2">
+      <button class="gallery-filter-btn active px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-medium" data-filter="all">Semua</button>
+      <button class="gallery-filter-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-filter="armada">Armada</button>
+      <button class="gallery-filter-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-filter="wisata">Wisata</button>
+      <button class="gallery-filter-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-filter="moment">Moment</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" id="gallery-grid">
+      <!-- Armada Photos -->
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="armada">
+        <div class="aspect-square bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Toyota Avanza</p>
+          <p class="text-xs text-slate-500">Armada Keluarga</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="armada">
+        <div class="aspect-square bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Toyota Innova</p>
+          <p class="text-xs text-slate-500">Armada Premium</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="armada">
+        <div class="aspect-square bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Hiace</p>
+          <p class="text-xs text-slate-500">Armada Grup</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="armada">
+        <div class="aspect-square bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Pajero Sport</p>
+          <p class="text-xs text-slate-500">Armada Luxury</p>
+        </div>
+      </div>
+
+      <!-- Wisata Photos -->
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="wisata">
+        <div class="aspect-square bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Tanah Lot</p>
+          <p class="text-xs text-slate-500">Wisata Pantai</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="wisata">
+        <div class="aspect-square bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Ubud Monkey Forest</p>
+          <p class="text-xs text-slate-500">Wisata Alam</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="wisata">
+        <div class="aspect-square bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Tegallalang Rice Terrace</p>
+          <p class="text-xs text-slate-500">Wisata Alam</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="wisata">
+        <div class="aspect-square bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Uluwatu Temple</p>
+          <p class="text-xs text-slate-500">Wisata Budaya</p>
+        </div>
+      </div>
+
+      <!-- Moment Photos -->
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="moment">
+        <div class="aspect-square bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Happy Customer</p>
+          <p class="text-xs text-slate-500">Testimoni</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="moment">
+        <div class="aspect-square bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Family Trip</p>
+          <p class="text-xs text-slate-500">Liburan Keluarga</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="moment">
+        <div class="aspect-square bg-gradient-to-br from-lime-400 to-lime-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Honeymoon</p>
+          <p class="text-xs text-slate-500">Bulan Madu</p>
+        </div>
+      </div>
+
+      <div class="gallery-item rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-category="moment">
+        <div class="aspect-square bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center">
+          <svg class="h-16 w-16 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-slate-900">Group Tour</p>
+          <p class="text-xs text-slate-500">Wisata Grup</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Gallery Filter
+  document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+      
+      // Update button styles
+      document.querySelectorAll('.gallery-filter-btn').forEach(b => {
+        b.classList.remove('bg-brand-600', 'text-white');
+        b.classList.add('bg-white', 'text-slate-700');
+      });
+      btn.classList.remove('bg-white', 'text-slate-700');
+      btn.classList.add('bg-brand-600', 'text-white');
+      
+      // Filter gallery items
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

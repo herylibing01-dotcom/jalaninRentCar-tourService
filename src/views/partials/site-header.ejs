@@ -7,6 +7,10 @@
     <nav class="flex items-center gap-3 text-sm sm:gap-5">
       <a href="/" class="<%= typeof page !== 'undefined' && page === 'home' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.home') %></a>
       <a href="/katalog" class="<%= typeof page !== 'undefined' && page === 'catalog' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.fleet') %></a>
+      <a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>">Tentang Kami</a>
+      <a href="/blog" class="<%= typeof page !== 'undefined' && page === 'blog' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>">Blog</a>
+      <a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>">Galeri</a>
+      <a href="/faq" class="<%= typeof page !== 'undefined' && page === 'faq' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>">FAQ</a>
       <a href="#ulasan" class="text-slate-600 hover:text-brand-700">Lihat Ulasan</a>
       <% if (user && user.role === 'customer') { %>
         <a href="/pesanan" class="<%= typeof page !== 'undefined' && page === 'bookings' ? 'font-semibold text-brand-700' : 'text-slate-600 hover:text-brand-700' %>"><%= t('nav.orders') %></a>

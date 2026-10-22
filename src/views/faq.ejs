@@ -1,0 +1,196 @@
+<%- include('partials/head') %>
+<%- include('partials/breadcrumb') %>
+<main class="min-h-screen bg-slate-100 px-3 py-8">
+  <div class="mx-auto max-w-4xl">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-slate-900">Frequently Asked Questions</h1>
+      <p class="mt-2 text-slate-600">Pertanyaan yang sering diajukan seputar layanan Jalanin Rent Car & Tour Service</p>
+    </header>
+
+    <!-- FAQ Categories -->
+    <div class="mb-8 flex flex-wrap justify-center gap-2">
+      <button class="faq-category-btn active px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-medium" data-category="all">Semua</button>
+      <button class="faq-category-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-category="booking">Booking</button>
+      <button class="faq-category-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-category="payment">Pembayaran</button>
+      <button class="faq-category-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-category="vehicle">Kendaraan</button>
+      <button class="faq-category-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-category="driver">Driver & Sopir</button>
+      <button class="faq-category-btn px-4 py-2 rounded-full bg-white text-slate-700 text-sm font-medium hover:bg-slate-200" data-category="cancellation">Pembatalan</button>
+    </div>
+
+    <!-- FAQ Items -->
+    <div class="space-y-4" id="faq-container">
+      <!-- Booking -->
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="booking">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Bagaimana cara melakukan booking sewa mobil?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Anda bisa melakukan booking melalui website kami dengan mengisi formulir di halaman checkout atau langsung menghubungi kami via WhatsApp. Pilih armada yang diinginkan, tentukan tanggal sewa, lokasi penjemputan, dan selesaikan pembayaran. Booking akan dikonfirmasi setelah pembayaran diterima.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="booking">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Apakah bisa booking untuk hari yang sama?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Untuk booking hari yang sama, silakan hubungi kami via WhatsApp atau telepon minimal 2 jam sebelum waktu penjemputan yang diinginkan. Kami akan cek ketersediaan armada dan driver untuk Anda.</p>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="payment">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Metode pembayaran apa yang tersedia?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Kami menerima pembayaran melalui transfer bank, cash saat penjemputan, dan pembayaran digital melalui e-wallet. Detail rekening bank akan diberikan setelah booking dikonfirmasi.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="payment">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Apakah ada uang muka (down payment)?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Ya, kami meminta uang muka minimal 30% dari total harga untuk mengkonfirmasi booking. Sisa pembayaran dapat dilunasi saat penjemputan atau sesuai kesepakatan.</p>
+        </div>
+      </div>
+
+      <!-- Vehicle -->
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="vehicle">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Kondisi kendaraan seperti apa?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Semua kendaraan kami dalam kondisi prima, terawat rutin, dan bersih. Kami melakukan service berkala sesuai jadwal pabrikan. Kendaraan juga dilindungi asuransi all-risk untuk keamanan dan kenyamanan Anda.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="vehicle">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Apakah termasuk BBM?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Untuk paket lepas kunci, BBM ditanggung penyewa. Untuk paket dengan sopir reguler, BBM ditanggung penyewa. Untuk paket all-in, BBM sudah termasuk dalam harga. Silakan konsultasikan dengan kami sebelum booking.</p>
+        </div>
+      </div>
+
+      <!-- Driver -->
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="driver">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Apakah sopir bisa berbahasa Inggris?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Ya, sebagian besar sopir kami bisa berkomunikasi dalam bahasa Inggris dasar. Jika Anda membutuhkan sopir yang fasih berbahasa Inggris atau bahasa lain, silakan request saat booking dan kami akan berikan sopir yang sesuai.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="driver">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Berapa jam kerja sopir per hari?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Standar kerja sopir adalah 10 jam per hari. Overtime akan dikenakan biaya tambahan 10% dari harga sewa per jam jika melebihi batas waktu. Waktu overtime dihitung dari jam ke-11.</p>
+        </div>
+      </div>
+
+      <!-- Cancellation -->
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="cancellation">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Bagaimana kebijakan pembatalan?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Pembatalan kurang dari 24 jam sebelum waktu penjemputan dikenakan biaya 50% dari total harga. Pembatalan lebih dari 24 jam sebelum penjemputan dikenakan biaya administrasi 10%. Uang muka tidak dapat dikembalikan jika pembatalan dilakukan < 12 jam sebelum penjemputan.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-2xl bg-white shadow-sm" data-category="cancellation">
+        <button class="faq-question w-full px-6 py-4 text-left font-semibold text-slate-900 flex items-center justify-between">
+          <span>Bagaimana jika saya ingin reschedule jadwal?</span>
+          <svg class="faq-chevron h-5 w-5 text-slate-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-slate-600">
+          <p>Reschedule diperbolehkan minimal 24 jam sebelum waktu penjemputan awal. Perubahan jadwal akan tergantung ketersediaan armada dan driver. Silakan hubungi kami via WhatsApp untuk request reschedule.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="mt-8 rounded-2xl bg-brand-600 p-8 text-center text-white">
+      <h2 class="text-2xl font-bold">Masih punya pertanyaan?</h2>
+      <p class="mt-2 text-brand-100">Hubungi kami via WhatsApp untuk konsultasi lebih lanjut</p>
+      <a href="https://wa.me/<%= company.phone?.replace(/\D/g, '') %>" target="_blank" class="mt-4 inline-block rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 hover:bg-brand-50">
+        Chat WhatsApp
+      </a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // FAQ Accordion
+  document.querySelectorAll('.faq-question').forEach(button => {
+    button.addEventListener('click', () => {
+      const answer = button.nextElementSibling;
+      const chevron = button.querySelector('.faq-chevron');
+      
+      answer.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    });
+  });
+
+  // Category Filter
+  document.querySelectorAll('.faq-category-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.dataset.category;
+      
+      // Update button styles
+      document.querySelectorAll('.faq-category-btn').forEach(b => {
+        b.classList.remove('bg-brand-600', 'text-white');
+        b.classList.add('bg-white', 'text-slate-700');
+      });
+      btn.classList.remove('bg-white', 'text-slate-700');
+      btn.classList.add('bg-brand-600', 'text-white');
+      
+      // Filter FAQ items
+      document.querySelectorAll('.faq-item').forEach(item => {
+        if (category === 'all' || item.dataset.category === category) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

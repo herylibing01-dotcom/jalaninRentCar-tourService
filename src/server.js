@@ -124,6 +124,30 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/faq", (req, res) => {
+  res.render("faq", {
+    title: "FAQ",
+  });
+});
+
+app.get("/about", (req, res) => {
+  res.render("about", {
+    title: "Tentang Kami",
+  });
+});
+
+app.get("/blog", (req, res) => {
+  res.render("blog", {
+    title: "Blog Wisata Bali",
+  });
+});
+
+app.get("/gallery", (req, res) => {
+  res.render("gallery", {
+    title: "Galeri",
+  });
+});
+
 app.use(authRoutes);
 app.use("/admin", adminRoutes);
 app.use(orderRoutes);
